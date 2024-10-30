@@ -39,13 +39,15 @@ M.open = function()
 
   volt.run(state.buf, {
     h = 10,
-    w = state.w - (2 * state.xpad),
+    w = state.w_with_pad,
     custom_empty_lines = function()
-      local maxline = (state.linecount + 2)
+      local minline = 5
+      local maxline = (state.linecount + minline)
+
       local lines = {}
 
       for i = 1, state.h do
-        local str = i < maxline and "" or string.rep(" ", state.w)
+        local str = (i > minline and i < maxline) and "" or string.rep(" ", state.w_with_pad)
         table.insert(lines, str)
       end
 
@@ -64,7 +66,7 @@ M.open = function()
   vim.bo[state.buf].ma = true
   vim.wo[state.win].virtualedit = "all"
 
-  api.nvim_win_set_cursor(state.win, { 2, 2 })
+  api.nvim_win_set_cursor(state.win, { 6, 2 })
 
   api.nvim_buf_attach(state.buf, false, {
     on_lines = function(_, _, _, line)

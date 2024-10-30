@@ -9,7 +9,31 @@ local empty_line = {
   name = "kekw",
 }
 
+
+local border = function(id, direction)
+  local icon = direction == "up" and { "┌", "┐" } or { "└", "┘" }
+
+  return {
+    lines = function()
+      return {
+        { { icon[1] .. string.rep("─", state.w_with_pad-2) .. icon[2], "comment" } },
+      }
+    end,
+    name = id,
+  }
+end
+
 return {
+
+  empty_line,
+
+  border("bline1", "up"),
+
+  {
+    lines = ui.headerbtns,
+    name = "headerbtns",
+  },
+  border("bline1", "down"),
 
   empty_line,
 
