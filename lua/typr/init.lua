@@ -12,12 +12,13 @@ M.setup = function(opts) end
 M.open = function()
   state.buf = api.nvim_create_buf(false, true)
   utils.gen_default_lines()
+  utils.gen_keyboard_col()
 
   volt.gen_data {
     { buf = state.buf, layout = layout, xpad = state.xpad, ns = state.ns },
   }
 
-  local win = api.nvim_open_win(state.buf, true, {
+  state.win = api.nvim_open_win(state.buf, true, {
     row = (vim.o.lines / 2) - (state.h / 2),
     col = (vim.o.columns / 2) - (state.w / 2),
     width = state.w,
@@ -29,12 +30,12 @@ M.open = function()
     title_pos = "center",
   })
 
-  api.nvim_win_set_hl_ns(win, state.ns)
+  api.nvim_win_set_hl_ns(state.win, state.ns)
 
   api.nvim_set_hl(state.ns, "FloatBorder", { link = "Exdarkborder" })
   api.nvim_set_hl(state.ns, "Normal", { link = "ExdarkBg" })
 
-  api.nvim_set_current_win(win)
+  api.nvim_set_current_win(state.win)
 
   volt.run(state.buf, {
     h = 10,
@@ -61,9 +62,9 @@ M.open = function()
 
   vim.bo[state.buf].filetype = "typr"
   vim.bo[state.buf].ma = true
-  vim.wo[win].virtualedit = "all"
+  vim.wo[state.win].virtualedit = "all"
 
-  api.nvim_win_set_cursor(win, { 2, 2 })
+  api.nvim_win_set_cursor(state.win, { 2, 2 })
 
   api.nvim_buf_attach(state.buf, false, {
     on_lines = function(_, _, _, line)
@@ -81,14 +82,17 @@ M.open = function()
       utils.get_accuracy()
       -- vim.print(state.stats.accuracy)
       volt.redraw(state.buf, "stats")
+
+      state.lastchar = curline:sub(-1)
+      volt.redraw(state.buf, "keyboard")
     end,
   })
 
   vim.keymap.set("i", "<Space>", function()
-    local pos = vim.api.nvim_win_get_cursor(win)
+    local pos = vim.api.nvim_win_get_cursor(state.win)
 
     if pos[2] > #state.default_lines[pos[1] - 1] then
-      api.nvim_win_set_cursor(win, { pos[1] + 1, 2 })
+      api.nvim_win_set_cursor(state.win, { pos[1] + 1, 2 })
     else
       api.nvim_feedkeys(" ", "n", true)
     end

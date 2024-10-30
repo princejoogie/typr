@@ -1,10 +1,11 @@
 local M = {
   xpad = 2,
-  w = math.floor(vim.o.columns / 1.5),
-  h = 10,
+  w = math.floor(vim.o.columns / 2),
+  h = 20,
   linecount = 3,
   default_lines = {},
   ui_lines = {},
+  lastchar = "",
 
   stats = {
     wordcount = 0,

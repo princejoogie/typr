@@ -4,7 +4,7 @@ local words = require "typr.words"
 
 M.words_to_lines = function()
   local lines = {}
-  local maxw = (state.w_with_pad / 2) - 7
+  local maxw = (state.w_with_pad ) - 7
 
   for _ = 1, state.linecount do
     local lineWords = {}
@@ -110,6 +110,10 @@ M.get_accuracy = function()
   local default_words = table.concat(state.default_lines):gsub("%s+", "")
   local accuracy = (abclen / #default_words) * 100
   state.stats.accuracy = math.floor(accuracy)
+end
+
+M.gen_keyboard_col = function()
+  state.keyboard_col = math.floor(state.w / 2) - 20
 end
 
 return M
