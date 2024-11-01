@@ -41,13 +41,12 @@ M.open = function()
     h = 10,
     w = state.w_with_pad,
     custom_empty_lines = function()
-      local minline = 5
-      local maxline = (state.linecount + minline)
+      local maxline = (state.linecount + state.words_row)
 
       local lines = {}
 
       for i = 1, state.h do
-        local str = (i > minline and i < maxline) and "" or string.rep(" ", state.w_with_pad)
+        local str = (i > state.words_row and i < maxline) and "" or string.rep(" ", state.w_with_pad)
         table.insert(lines, str)
       end
 
@@ -71,29 +70,29 @@ M.open = function()
   api.nvim_buf_attach(state.buf, false, {
     on_lines = function(_, _, _, line)
       local curline = api.nvim_get_current_line():sub(3)
-      local default_line = state.default_lines[line]
+      local words_row = line - state.words_row + 1
+      local default_line = state.default_lines[words_row]
 
-      state.ui_lines[line] = utils.gen_lines_diff(default_line, curline)
+      state.ui_lines[words_row] = utils.gen_lines_diff(default_line, curline)
 
       api.nvim_buf_set_extmark(state.buf, state.ns, line, 0, {
-        virt_text = state.ui_lines[line],
+        virt_text = state.ui_lines[words_row],
         virt_text_win_col = state.xpad,
         id = line + 1,
       })
 
-      utils.get_accuracy()
-      -- vim.print(state.stats.accuracy)
-      volt.redraw(state.buf, "stats")
+      -- utils.get_accuracy()
+      -- volt.redraw(state.buf, "stats")
 
-      state.lastchar = curline:sub(-1)
-      volt.redraw(state.buf, "keyboard")
+      -- state.lastchar = curline:sub(-1)
+      -- volt.redraw(state.buf, "keyboard")
     end,
   })
 
   vim.keymap.set("i", "<Space>", function()
     local pos = vim.api.nvim_win_get_cursor(state.win)
 
-    if pos[2] > #state.default_lines[pos[1] - 1] then
+    if pos[2] > #state.default_lines[pos[1] - state.words_row] then
       api.nvim_win_set_cursor(state.win, { pos[1] + 1, 2 })
     else
       api.nvim_feedkeys(" ", "n", true)

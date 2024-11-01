@@ -6,6 +6,7 @@ local M = {
   default_lines = {},
   ui_lines = {},
   lastchar = "",
+  words_row = 5,
 
   addons = {
     numbers = false,
