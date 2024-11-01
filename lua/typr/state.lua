@@ -5,13 +5,15 @@ local M = {
   linecount = 3,
   default_lines = {},
   ui_lines = {},
-  lastchar = "",
+  lastchar = nil,
   words_row = 5,
+  timer = vim.uv.new_timer(),
+  secs = 0,
 
   addons = {
     numbers = false,
     punctuation = false,
-    time = 15,
+    time = 30,
   },
 
   stats = {

@@ -1,10 +1,11 @@
 local M = {}
 local state = require "typr.state"
 local words = require "typr.words"
+local volt = require "volt"
 
 M.words_to_lines = function()
   local lines = {}
-  local maxw = (state.w_with_pad ) - 7
+  local maxw = state.w_with_pad - 7
 
   for _ = 1, state.linecount do
     local lineWords = {}
@@ -73,24 +74,12 @@ M.count_words = function(ui_line)
   local strs = ""
 
   for _, v in ipairs(ui_line) do
-    -- vim.print{v[2] ,v[1]:sub(1, 1) == " "}
-    -- vim.print{v[2] == "Added" and v[1]:sub(1, 1) == " " }
     if v[2] == "Added" and v[1]:sub(-1) == " " then
       strs = strs .. v[1]
     end
   end
 
   return #strs:gsub("%S+", "")
-  --
-  -- local count = 0
-  --
-  --    for _, value in ipairs(state.ui_lines) do
-  --      count = count + utils.count_words(value)
-  --    end
-  --
-  --    if count > 0 then
-  --      state.stats.wordcount = count
-  --    end
 end
 
 M.get_accuracy = function()
@@ -114,6 +103,23 @@ end
 
 M.gen_keyboard_col = function()
   state.keyboard_col = math.floor(state.w / 2) - 20
+end
+
+M.start_timer = function(secs)
+  state.timer:start(
+    0,
+    1000,
+    vim.schedule_wrap(function()
+      if secs > 0 then
+        secs = secs - 1
+      else
+        state.timer:stop()
+      end
+
+      state.secs = secs
+      volt.redraw(state.buf, "stats")
+    end)
+  )
 end
 
 return M

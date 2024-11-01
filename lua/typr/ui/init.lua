@@ -7,7 +7,8 @@ M.words = function()
   return state.ui_lines
 end
 
-local k = { string.rep(" ", 24) }
+local spaces = { string.rep(" ", 23) }
+
 M.headerbtns = function()
   local hovermark = vim.g.nvmark_hovered
   local addons = state.addons
@@ -47,12 +48,12 @@ M.headerbtns = function()
       { "│ ", "comment" },
       puncbtn,
       numbtn,
-      k,
+      spaces,
       timebtn,
 
-      { " 15 *", addons.time == 15 and "" or "comment", timeaction(15) },
       { " 30 *", addons.time == 30 and "" or "comment", timeaction(30) },
-      { " 60", addons.time == 60 and "" or "comment", timeaction(60) },
+      { " 60 *", addons.time == 60 and "" or "comment", timeaction(60) },
+      { " 120", addons.time == 120 and "" or "comment", timeaction(60) },
       { " │", "comment" },
     },
   }
@@ -64,6 +65,7 @@ M.stats = function()
       { " WPM ", "lazyh1" },
       { " " .. state.stats.wordcount .. " ", "visual" },
       { "    Accuracy: " .. state.stats.accuracy .. " % " },
+      {"   " .. state.secs .. "s"}
     },
   }
 end

@@ -69,6 +69,10 @@ M.open = function()
 
   api.nvim_buf_attach(state.buf, false, {
     on_lines = function(_, _, _, line)
+      if not state.lastchar then
+        utils.start_timer(state.addons.time)
+      end
+
       local curline = api.nvim_get_current_line():sub(3)
       local words_row = line - state.words_row + 1
       local default_line = state.default_lines[words_row]
@@ -81,23 +85,16 @@ M.open = function()
         id = line + 1,
       })
 
-      -- utils.get_accuracy()
-      -- volt.redraw(state.buf, "stats")
-
-      -- state.lastchar = curline:sub(-1)
+      state.lastchar = curline:sub(-1)
       -- volt.redraw(state.buf, "keyboard")
     end,
   })
 
-  vim.keymap.set("i", "<Space>", function()
-    local pos = vim.api.nvim_win_get_cursor(state.win)
 
-    if pos[2] > #state.default_lines[pos[1] - state.words_row] then
-      api.nvim_win_set_cursor(state.win, { pos[1] + 1, 2 })
-    else
-      api.nvim_feedkeys(" ", "n", true)
-    end
-  end, { buffer = state.buf })
+  require('typr.mappings')
+
+
+
 end
 
 return M
