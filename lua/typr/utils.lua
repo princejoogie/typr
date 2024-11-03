@@ -1,11 +1,11 @@
 local M = {}
 local state = require "typr.state"
-local words = require "typr.words"
+local words = require "typr.methods.words"
 local volt = require "volt"
 
 M.words_to_lines = function()
   local lines = {}
-  local maxw = state.w_with_pad - 7
+  local maxw = state.w_with_pad
 
   for _ = 1, state.linecount do
     local lineWords = {}
@@ -135,7 +135,7 @@ M.start_timer = function()
     1000,
     vim.schedule_wrap(function()
       state.secs = state.secs + 1
-      volt.redraw(state.buf, "stats")
+      -- volt.redraw(state.buf, "stats")
     end)
   )
 end

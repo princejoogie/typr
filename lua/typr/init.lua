@@ -79,7 +79,7 @@ M.open = function()
   vim.bo[state.buf].ma = true
   vim.wo[state.win].virtualedit = "all"
 
-  api.nvim_win_set_cursor(state.win, { 6, 2 })
+  api.nvim_win_set_cursor(state.win, { 6, state.xpad })
 
   api.nvim_buf_attach(state.buf, false, {
     on_lines = function(_, _, _, line)

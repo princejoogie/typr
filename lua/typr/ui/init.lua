@@ -1,14 +1,14 @@
 local M = {}
 local state = require "typr.state"
 local volt = require "volt"
-local api = require("typr.api")
-local myapi = require("typr.api")
+local api = require "typr.api"
+local myapi = require "typr.api"
 
 M.words = function()
   return state.ui_lines
 end
 
-local spaces = { string.rep(" ", 26) }
+local spaces = { string.rep(" ", 24) }
 
 M.headerbtns = function()
   local hovermark = vim.g.nvmark_hovered
@@ -66,9 +66,32 @@ M.stats = function()
     {
       { " WPM ", "lazyh1" },
       { " " .. stats.wpm .. " ", "visual" },
-      {"  Words Typed: " .. stats.correct_word_ratio},
+      { "  Words Typed: " .. stats.correct_word_ratio },
       { "    Accuracy: " .. stats.accuracy .. "%" },
-      { "    " .. state.secs .. "s"},
+      { "    " .. state.secs .. "s" },
+    },
+  }
+end
+
+M.mappings = function()
+  return {
+    {
+      { " ESC ", "visual" },
+      {" or ", 'comment'},
+      { " q ", "visual" },
+      { " - Quit ", "comment" },
+
+      { "  " },
+
+      { " i ", "visual" },
+      { " - Start ", "comment" },
+
+      {"                   "},
+
+      { " CTRL ", "visual" },
+      { " " },
+      { " R ", "visual" },
+      { " - Restart ", "comment" },
     },
   }
 end

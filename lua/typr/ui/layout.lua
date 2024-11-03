@@ -1,5 +1,4 @@
 local ui = require "typr.ui"
-local keyboard = require "typr.ui.keys"
 local state = require "typr.state"
 
 local empty_line = {
@@ -9,14 +8,13 @@ local empty_line = {
   name = "kekw",
 }
 
-
 local border = function(id, direction)
   local icon = direction == "up" and { "┌", "┐" } or { "└", "┘" }
 
   return {
     lines = function()
       return {
-        { { icon[1] .. string.rep("─", state.w_with_pad-2) .. icon[2], "comment" } },
+        { { icon[1] .. string.rep("─", state.w_with_pad - 2) .. icon[2], "comment" } },
       }
     end,
     name = id,
@@ -33,6 +31,7 @@ return {
     lines = ui.headerbtns,
     name = "headerbtns",
   },
+
   border("bline1", "down"),
 
   empty_line,
@@ -44,17 +43,17 @@ return {
 
   empty_line,
 
-  {
-    lines = ui.stats,
-    name = "stats",
-  },
+  -- {
+  --   lines = ui.stats,
+  --   name = "stats",
+  -- },
+  -- empty_line,
+  -- empty_line,
   empty_line,
 
-  -- {
-  --   lines = keyboard,
-  --   name = "keyboard",
-  --   xpad = function()
-  --     return state.keyboard_col
-  --   end,
-  -- },
+  {
+    lines = ui.mappings,
+    name = "mappings",
+  },
+  empty_line,
 }

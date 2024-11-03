@@ -13,13 +13,13 @@ map("i", "<Space>", function()
       return
     end
 
-    api.nvim_win_set_cursor(state.win, { pos[1] + 1, 2 })
+    api.nvim_win_set_cursor(state.win, { pos[1] + 1, state.xpad })
   else
     api.nvim_feedkeys(" ", "n", true)
   end
 end, { buffer = state.buf })
 
 map("n", "i", function()
-  api.nvim_win_set_cursor(state.win, { state.words_row + 1, 2 })
+  api.nvim_win_set_cursor(state.win, { state.words_row + 1, state.xpad })
   vim.cmd.startinsert()
 end, { buffer = state.buf })
