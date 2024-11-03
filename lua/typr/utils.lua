@@ -103,6 +103,7 @@ M.count_correct_words = function()
   end
 
   state.stats.correct_word_ratio = count .. " / " .. (count + unmatched_count)
+  state.stats.wpm = math.floor((count / state.secs) * 60)
 end
 
 M.get_accuracy = function()

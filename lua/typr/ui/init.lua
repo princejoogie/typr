@@ -67,7 +67,7 @@ M.stats = function()
       { " WPM ", "lazyh1" },
       { " " .. stats.wpm .. " ", "visual" },
       {"  Words Typed: " .. stats.correct_word_ratio},
-      { "    Accuracy: " .. stats.accuracy .. " %" },
+      { "    Accuracy: " .. stats.accuracy .. "%" },
       { "    " .. state.secs .. "s"},
     },
   }
