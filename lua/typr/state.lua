@@ -2,7 +2,7 @@ local M = {
   xpad = 2,
   w = 80,
   h = 20,
-  linecount = 3,
+  linecount = 1,
   default_lines = {},
   ui_lines = {},
   lastchar = nil,
@@ -17,8 +17,9 @@ local M = {
   },
 
   stats = {
-    wordcount = 0,
     accuracy = 0,
+    wpm = 0,
+    correct_word_ratio = "?",
   },
 }
 

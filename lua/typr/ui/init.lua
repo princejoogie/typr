@@ -61,12 +61,14 @@ M.headerbtns = function()
 end
 
 M.stats = function()
+  local stats = state.stats
   return {
     {
       { " WPM ", "lazyh1" },
-      { " " .. state.stats.wordcount .. " ", "visual" },
-      { "    Accuracy: " .. state.stats.accuracy .. " % " },
-      {string.rep(" ", 41)..  "   " .. state.secs .. "s"}
+      { " " .. stats.wpm .. " ", "visual" },
+      {"  Words Typed: " .. stats.correct_word_ratio},
+      { "    Accuracy: " .. stats.accuracy .. " %" },
+      { "    " .. state.secs .. "s"},
     },
   }
 end

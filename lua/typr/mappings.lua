@@ -1,6 +1,7 @@
 local state = require "typr.state"
 local map = vim.keymap.set
 local api = vim.api
+local utils = require "typr.utils"
 
 map("i", "<Space>", function()
   local pos = vim.api.nvim_win_get_cursor(state.win)
@@ -8,8 +9,7 @@ map("i", "<Space>", function()
 
   if pos[2] > curline_end then
     if state.words_row_end == pos[1] then
-      state.timer:stop()
-      vim.cmd.stopinsert()
+      utils.on_finish()
       return
     end
 

@@ -56,7 +56,9 @@ M.gen_lines_diff = function(line, userline)
 
     local resultlen = #result
 
-    expected = expected == " " and char or expected
+    if expected ~= char and expected == " " then
+      expected = "x"
+    end
 
     if resultlen > 0 and result[resultlen][2] == status then
       result[resultlen][1] = result[resultlen][1] .. expected
@@ -70,16 +72,37 @@ M.gen_lines_diff = function(line, userline)
   return result
 end
 
-M.count_words = function(ui_line)
-  local strs = ""
+M.count_correct_words = function()
+  local count = 0
+  local userlines = {}
+  local default_lines = {}
+  local unmatched_count = 0
 
-  for _, v in ipairs(ui_line) do
-    if v[2] == "Added" and v[1]:sub(-1) == " " then
+  for _, line in ipairs(state.ui_lines) do
+    local strs = ""
+
+    for _, v in ipairs(line) do
       strs = strs .. v[1]
+    end
+
+    table.insert(userlines, vim.split(strs, " "))
+  end
+
+  for _, line in ipairs(state.default_lines) do
+    table.insert(default_lines, vim.split(line, " "))
+  end
+
+  for i, line in ipairs(userlines) do
+    for j, word in ipairs(line) do
+      if default_lines[i][j] == word then
+        count = count + 1
+      else
+        unmatched_count = unmatched_count + 1
+      end
     end
   end
 
-  return #strs:gsub("%S+", "")
+  state.stats.correct_word_ratio = count .. " / " .. (count + unmatched_count)
 end
 
 M.get_accuracy = function()
@@ -118,7 +141,7 @@ end
 
 M.set_emptylines = function()
   local maxline = (state.linecount + state.words_row)
-  state.words_row_end  = maxline
+  state.words_row_end = maxline
 
   local lines = {}
 
@@ -128,6 +151,14 @@ M.set_emptylines = function()
   end
 
   vim.api.nvim_buf_set_lines(state.buf, 0, -1, false, lines)
+end
+
+M.on_finish = function()
+  state.timer:stop()
+  vim.cmd.stopinsert()
+  M.get_accuracy()
+  M.count_correct_words()
+  volt.redraw(state.buf, "stats")
 end
 
 return M
