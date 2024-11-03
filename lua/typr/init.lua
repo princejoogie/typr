@@ -4,6 +4,7 @@ local state = require "typr.state"
 local layout = require "typr.ui.layout"
 local volt = require "volt"
 local utils = require "typr.utils"
+local voltstate = require "volt.state"
 
 state.ns = api.nvim_create_namespace "Typr"
 
@@ -11,12 +12,29 @@ M.setup = function(opts) end
 
 M.open = function()
   state.buf = api.nvim_create_buf(false, true)
+  local dim_buf = api.nvim_create_buf(false, true)
   utils.gen_default_lines()
   utils.gen_keyboard_col()
 
   volt.gen_data {
     { buf = state.buf, layout = layout, xpad = state.xpad, ns = state.ns },
   }
+
+  -- local dim_win = api.nvim_open_win(k, false, {
+  --   noautocmd = true,
+  --   focusable = false,
+  --   row = 0,
+  --   col = 0,
+  --   width = vim.o.columns,
+  --   height = vim.o.lines-2,
+  --   relative = "editor",
+  --   style = "minimal",
+  --   border = "none",
+  -- })
+
+  -- vim.wo[dim_win].winblend = 40
+
+  state.h = voltstate[state.buf].h
 
   state.win = api.nvim_open_win(state.buf, true, {
     row = (vim.o.lines / 2) - (state.h / 2),
@@ -25,9 +43,10 @@ M.open = function()
     height = state.h,
     relative = "editor",
     style = "minimal",
-    border = "single",
-    title = { { " Typr ", "ExBlack3bg" } },
-    title_pos = "center",
+    border = "none",
+    -- title = { { " Typr ", "ExBlack3bg" } },
+    -- title_pos = "center",
+    zindex = 100,
   })
 
   api.nvim_win_set_hl_ns(state.win, state.ns)
@@ -58,9 +77,12 @@ M.open = function()
 
   ----------------- keymaps --------------------------
   volt.mappings {
-    bufs = { state.buf },
+    bufs = { state.buf, dim_buf },
+    after_close =function()
+      state.timer:stop()
+    end
+    -- bufs = { state.buf, k },
   }
-
   vim.bo[state.buf].filetype = "typr"
   vim.bo[state.buf].ma = true
   vim.wo[state.win].virtualedit = "all"
@@ -70,7 +92,7 @@ M.open = function()
   api.nvim_buf_attach(state.buf, false, {
     on_lines = function(_, _, _, line)
       if not state.lastchar then
-        utils.start_timer(state.addons.time)
+        utils.start_timer()
       end
 
       local curline = api.nvim_get_current_line():sub(3)
@@ -90,11 +112,7 @@ M.open = function()
     end,
   })
 
-
-  require('typr.mappings')
-
-
-
+  require "typr.mappings"
 end
 
 return M
