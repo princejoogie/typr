@@ -10,16 +10,19 @@ state.ns = api.nvim_create_namespace "Typr"
 
 M.setup = function(opts) end
 
+M.initialize_volt = function()
+  volt.gen_data {
+    { buf = state.buf, layout = layout, xpad = state.xpad, ns = state.ns },
+  }
+end
+
 M.open = function()
   state.buf = api.nvim_create_buf(false, true)
   local dim_buf = api.nvim_create_buf(false, true)
   utils.gen_default_lines()
-  utils.gen_keyboard_col()
+  -- utils.gen_keyboard_col()
 
-  volt.gen_data {
-    { buf = state.buf, layout = layout, xpad = state.xpad, ns = state.ns },
-  }
-
+  M.initialize_volt()
   -- local dim_win = api.nvim_open_win(k, false, {
   --   noautocmd = true,
   --   focusable = false,
@@ -59,18 +62,7 @@ M.open = function()
   volt.run(state.buf, {
     h = 10,
     w = state.w_with_pad,
-    custom_empty_lines = function()
-      local maxline = (state.linecount + state.words_row)
-
-      local lines = {}
-
-      for i = 1, state.h do
-        local str = (i > state.words_row and i < maxline) and "" or string.rep(" ", state.w_with_pad)
-        table.insert(lines, str)
-      end
-
-      api.nvim_buf_set_lines(state.buf, 0, -1, false, lines)
-    end,
+    custom_empty_lines = utils.set_emptylines,
   })
 
   require("volt.events").add(state.buf)
@@ -78,9 +70,9 @@ M.open = function()
   ----------------- keymaps --------------------------
   volt.mappings {
     bufs = { state.buf, dim_buf },
-    after_close =function()
+    after_close = function()
       state.timer:stop()
-    end
+    end,
     -- bufs = { state.buf, k },
   }
   vim.bo[state.buf].filetype = "typr"
@@ -91,7 +83,7 @@ M.open = function()
 
   api.nvim_buf_attach(state.buf, false, {
     on_lines = function(_, _, _, line)
-      if not state.lastchar then
+      if not state.lastchar and api.nvim_get_mode().mode == "i" then
         utils.start_timer()
       end
 

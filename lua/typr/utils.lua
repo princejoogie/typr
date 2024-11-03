@@ -116,4 +116,18 @@ M.start_timer = function()
   )
 end
 
+M.set_emptylines = function()
+  local maxline = (state.linecount + state.words_row)
+  state.words_row_end  = maxline
+
+  local lines = {}
+
+  for i = 1, state.h do
+    local str = (i > state.words_row and i <= maxline) and "" or string.rep(" ", state.w_with_pad)
+    table.insert(lines, str)
+  end
+
+  vim.api.nvim_buf_set_lines(state.buf, 0, -1, false, lines)
+end
+
 return M

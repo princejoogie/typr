@@ -2,6 +2,7 @@ local M = {}
 local state = require "typr.state"
 local volt = require "volt"
 local api = require("typr.api")
+local myapi = require("typr.api")
 
 M.words = function()
   return state.ui_lines
@@ -38,8 +39,8 @@ M.headerbtns = function()
   local setline = function(x)
     -- hover = { id = "time_m", redraw = "headerbtns" },
     return function()
-      state.linecount = x
       volt.redraw(state.buf, "headerbtns")
+      myapi.set_linecount(x)
     end
   end
 
