@@ -125,17 +125,13 @@ M.get_accuracy = function()
   state.stats.accuracy = math.floor(accuracy)
 end
 
-M.gen_keyboard_col = function()
-  state.keyboard_col = math.floor(state.w / 2) - 20
-end
-
 M.start_timer = function()
   state.timer:start(
     0,
     1000,
     vim.schedule_wrap(function()
       state.secs = state.secs + 1
-      -- volt.redraw(state.buf, "stats")
+      volt.redraw(state.buf, "stats")
     end)
   )
 end
@@ -157,9 +153,16 @@ end
 M.on_finish = function()
   state.timer:stop()
   vim.cmd.stopinsert()
+
   M.get_accuracy()
   M.count_correct_words()
-  volt.redraw(state.buf, "stats")
+
+  state.h = state.h + 2
+  vim.api.nvim_win_set_height(state.win, state.h)
+  M.set_emptylines()
+
+  require("typr").initialize_volt()
+  volt.redraw(state.buf, "all")
 end
 
 return M

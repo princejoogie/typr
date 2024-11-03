@@ -5,7 +5,7 @@ local empty_line = {
   lines = function()
     return { {} }
   end,
-  name = "kekw",
+  name = "emptyline",
 }
 
 local border = function(id, direction)
@@ -22,8 +22,6 @@ local border = function(id, direction)
 end
 
 return {
-
-  empty_line,
 
   border("bline1", "up"),
 
@@ -43,17 +41,13 @@ return {
 
   empty_line,
 
-  -- {
-  --   lines = ui.stats,
-  --   name = "stats",
-  -- },
-  -- empty_line,
-  -- empty_line,
-  empty_line,
+  {
+    lines = ui.stats,
+    name = "stats",
+  },
 
   {
     lines = ui.mappings,
     name = "mappings",
   },
-  empty_line,
 }

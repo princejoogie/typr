@@ -8,7 +8,7 @@ M.words = function()
   return state.ui_lines
 end
 
-local spaces = { string.rep(" ", 24) }
+local spaces = { string.rep(" ", 26) }
 
 M.headerbtns = function()
   local hovermark = vim.g.nvmark_hovered
@@ -16,7 +16,7 @@ M.headerbtns = function()
 
   local puncbtn = {
     "  Punctuation ",
-    (addons.punctuation or hovermark == "punc_m") and "exgreen" or "comment",
+    (addons.punctuation or hovermark == "punc_m") and "exgreen" or "normal",
 
     {
       hover = { id = "punc_m", redraw = "headerbtns" },
@@ -26,7 +26,7 @@ M.headerbtns = function()
 
   local numbtn = {
     "   Numbers ",
-    (addons.numbers or hovermark == "num_m") and "exgreen" or "comment",
+    (addons.numbers or hovermark == "num_m") and "exgreen" or "normal",
 
     {
       hover = { id = "num_m", redraw = "headerbtns" },
@@ -60,16 +60,54 @@ M.headerbtns = function()
   }
 end
 
+local border = function(direction)
+  local icon = direction == "up" and { "┌", "┐" } or { "└", "┘" }
+
+  return { {
+    icon[1] .. string.rep("─", state.w_with_pad - 2) .. icon[2],
+    "added",
+  } }
+end
+
 M.stats = function()
   local stats = state.stats
+
+  vim.print(stats.wpm)
+
+  if state.secs == 0 then
+    return { {}, {} }
+  end
+
+  if stats.wpm == 0 then
+    return {
+      { { string.rep(" ", (state.w_with_pad / 2) - 3) }, { "  " .. state.secs .. "s  " } },
+    }
+  end
+
+  local txts = {
+    { "│ ", "added" },
+    { "Results:", "Added" },
+    { "  Words : " .. stats.correct_word_ratio },
+    { "    Accuracy: " .. stats.accuracy .. "%" },
+    { "    " .. state.secs .. "s  " },
+    { " WPM ", "pmenusel" },
+    { " " .. stats.wpm .. " ", "visual" },
+    { " │", "added" },
+  }
+
+  local totalstrlen = 0
+
+  for _, v in ipairs(txts) do
+    totalstrlen = totalstrlen + #v[1]
+  end
+
+  table.insert(txts, #txts, { string.rep(" ", state.w - totalstrlen + 4), "added" })
+
   return {
-    {
-      { " WPM ", "lazyh1" },
-      { " " .. stats.wpm .. " ", "visual" },
-      { "  Words Typed: " .. stats.correct_word_ratio },
-      { "    Accuracy: " .. stats.accuracy .. "%" },
-      { "    " .. state.secs .. "s" },
-    },
+    border "up",
+    txts,
+    border "down",
+    {},
   }
 end
 
@@ -77,7 +115,7 @@ M.mappings = function()
   return {
     {
       { " ESC ", "visual" },
-      {" or ", 'comment'},
+      { " or ", "comment" },
       { " q ", "visual" },
       { " - Quit ", "comment" },
 
@@ -86,7 +124,7 @@ M.mappings = function()
       { " i ", "visual" },
       { " - Start ", "comment" },
 
-      {"                   "},
+      { "                   " },
 
       { " CTRL ", "visual" },
       { " " },

@@ -20,22 +20,8 @@ M.open = function()
   state.buf = api.nvim_create_buf(false, true)
   local dim_buf = api.nvim_create_buf(false, true)
   utils.gen_default_lines()
-  -- utils.gen_keyboard_col()
 
   M.initialize_volt()
-  -- local dim_win = api.nvim_open_win(k, false, {
-  --   noautocmd = true,
-  --   focusable = false,
-  --   row = 0,
-  --   col = 0,
-  --   width = vim.o.columns,
-  --   height = vim.o.lines-2,
-  --   relative = "editor",
-  --   style = "minimal",
-  --   border = "none",
-  -- })
-
-  -- vim.wo[dim_win].winblend = 40
 
   state.h = voltstate[state.buf].h
 
@@ -46,7 +32,7 @@ M.open = function()
     height = state.h,
     relative = "editor",
     style = "minimal",
-    border = "none",
+    border = "single",
     -- title = { { " Typr ", "ExBlack3bg" } },
     -- title_pos = "center",
     zindex = 100,
@@ -79,7 +65,7 @@ M.open = function()
   vim.bo[state.buf].ma = true
   vim.wo[state.win].virtualedit = "all"
 
-  api.nvim_win_set_cursor(state.win, { 6, state.xpad })
+  api.nvim_win_set_cursor(state.win, { state.words_row+1, state.xpad })
 
   api.nvim_buf_attach(state.buf, false, {
     on_lines = function(_, _, _, line)
