@@ -2,6 +2,7 @@ local state = require "typr.state"
 local map = vim.keymap.set
 local api = vim.api
 local utils = require "typr.utils"
+local myapi = require "typr.api"
 
 map("i", "<Space>", function()
   local pos = vim.api.nvim_win_get_cursor(state.win)
@@ -22,4 +23,9 @@ end, { buffer = state.buf })
 map("n", "i", function()
   api.nvim_win_set_cursor(state.win, { state.words_row + 1, state.xpad })
   vim.cmd.startinsert()
+end, { buffer = state.buf })
+
+map("n", "<C-r>", function()
+  api.nvim_win_set_cursor(state.win, { state.words_row + 1, state.xpad })
+  myapi.restart()
 end, { buffer = state.buf })

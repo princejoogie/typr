@@ -71,8 +71,6 @@ end
 M.stats = function()
   local stats = state.stats
 
-  vim.print(stats.wpm)
-
   if state.secs == 0 then
     return { {}, {} }
   end
@@ -100,7 +98,7 @@ M.stats = function()
     totalstrlen = totalstrlen + vim.api.nvim_strwidth(v[1])
   end
 
-  table.insert(txts, #txts-2, { string.rep(" ", state.w_with_pad - totalstrlen ), "added" })
+  table.insert(txts, #txts - 2, { string.rep(" ", state.w_with_pad - totalstrlen), "added" })
 
   return {
     border "up",
