@@ -2,7 +2,6 @@ local M = {}
 local state = require "typr.state"
 local volt = require "volt"
 local api = require "typr.api"
-local myapi = require "typr.api"
 
 M.words = function()
   return state.ui_lines
@@ -40,7 +39,7 @@ M.headerbtns = function()
     -- hover = { id = "time_m", redraw = "headerbtns" },
     return function()
       volt.redraw(state.buf, "headerbtns")
-      myapi.set_linecount(x)
+      api.set_linecount(x)
     end
   end
 
@@ -98,10 +97,10 @@ M.stats = function()
   local totalstrlen = 0
 
   for _, v in ipairs(txts) do
-    totalstrlen = totalstrlen + #v[1]
+    totalstrlen = totalstrlen + vim.api.nvim_strwidth(v[1])
   end
 
-  table.insert(txts, #txts, { string.rep(" ", state.w - totalstrlen + 4), "added" })
+  table.insert(txts, #txts-2, { string.rep(" ", state.w_with_pad - totalstrlen ), "added" })
 
   return {
     border "up",
