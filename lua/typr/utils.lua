@@ -105,18 +105,12 @@ M.gen_keyboard_col = function()
   state.keyboard_col = math.floor(state.w / 2) - 20
 end
 
-M.start_timer = function(secs)
+M.start_timer = function()
   state.timer:start(
     0,
     1000,
     vim.schedule_wrap(function()
-      if secs > 0 then
-        secs = secs - 1
-      else
-        state.timer:stop()
-      end
-
-      state.secs = secs
+      state.secs = state.secs + 1
       volt.redraw(state.buf, "stats")
     end)
   )

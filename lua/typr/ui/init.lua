@@ -7,7 +7,7 @@ M.words = function()
   return state.ui_lines
 end
 
-local spaces = { string.rep(" ", 23) }
+local spaces = { string.rep(" ", 26) }
 
 M.headerbtns = function()
   local hovermark = vim.g.nvmark_hovered
@@ -33,12 +33,12 @@ M.headerbtns = function()
     },
   }
 
-  local timebtn = { "  Time ", "exred" }
+  local linesbtn = { "  Lines ", "exred" }
 
-  local timeaction = function(x)
+  local setline = function(x)
     -- hover = { id = "time_m", redraw = "headerbtns" },
     return function()
-      state.addons.time = x
+      state.linecount = x
       volt.redraw(state.buf, "headerbtns")
     end
   end
@@ -49,11 +49,11 @@ M.headerbtns = function()
       puncbtn,
       numbtn,
       spaces,
-      timebtn,
+      linesbtn,
 
-      { " 30 *", addons.time == 30 and "" or "comment", timeaction(30) },
-      { " 60 *", addons.time == 60 and "" or "comment", timeaction(60) },
-      { " 120", addons.time == 120 and "" or "comment", timeaction(60) },
+      { " 3 *", state.linecount == 3 and "" or "comment", setline(3) },
+      { " 6 *", state.linecount == 6 and "" or "comment", setline(6) },
+      { " 9", state.linecount == 9 and "" or "comment", setline(9) },
       { " │", "comment" },
     },
   }
@@ -65,7 +65,7 @@ M.stats = function()
       { " WPM ", "lazyh1" },
       { " " .. state.stats.wordcount .. " ", "visual" },
       { "    Accuracy: " .. state.stats.accuracy .. " % " },
-      {"   " .. state.secs .. "s"}
+      {string.rep(" ", 41)..  "   " .. state.secs .. "s"}
     },
   }
 end
