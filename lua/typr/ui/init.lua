@@ -11,11 +11,11 @@ local spaces = { string.rep(" ", 26) }
 
 M.headerbtns = function()
   local hovermark = vim.g.nvmark_hovered
-  local addons = state.addons
+  local config = state.config
 
   local puncbtn = {
     "  Punctuation ",
-    (addons.punctuation or hovermark == "punc_m") and "exgreen" or "normal",
+    (config.punctuation or hovermark == "punc_m") and "exgreen" or "normal",
 
     {
       hover = { id = "punc_m", redraw = "headerbtns" },
@@ -25,7 +25,7 @@ M.headerbtns = function()
 
   local numbtn = {
     "   Numbers ",
-    (addons.numbers or hovermark == "num_m") and "exgreen" or "normal",
+    (config.numbers or hovermark == "num_m") and "exgreen" or "normal",
 
     {
       hover = { id = "num_m", redraw = "headerbtns" },

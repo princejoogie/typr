@@ -2,7 +2,7 @@ local M = {
   xpad = 2,
   w = 80,
   h = 20,
-  linecount = 1,
+  linecount = 3,
   default_lines = {},
   ui_lines = {},
   lastchar = nil,
@@ -10,10 +10,9 @@ local M = {
   timer = vim.uv.new_timer(),
   secs = 0,
 
-  addons = {
+  config = {
     numbers = false,
     punctuation = false,
-    time = 30,
   },
 
   stats = {

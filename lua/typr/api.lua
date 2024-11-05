@@ -4,15 +4,15 @@ local state = require "typr.state"
 local utils = require "typr.utils"
 
 M.toggle_punctuation = function()
-  state.addons.punctuation = not state.addons.punctuation
+  state.config.punctuation = not state.config.punctuation
   volt.redraw(state.buf, "headerbtns")
-  vim.print { state.addons.punctuation }
 end
 
 M.toggle_numbers = function()
-  state.addons.numbers = not state.addons.numbers
+  state.config.numbers = not state.config.numbers
   volt.redraw(state.buf, "headerbtns")
-  print "bruh"
+  utils.gen_default_lines()
+  volt.redraw(state.buf, "words")
 end
 
 M.set_linecount = function(x)

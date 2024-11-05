@@ -1,7 +1,20 @@
 local M = {}
 local state = require "typr.state"
-local words = require "typr.methods.words"
+local words = require "typr.constants.words"
 local volt = require "volt"
+
+M.gen_word = function()
+  local word
+  local frequency = math.random(1, 4)
+
+  if frequency == 4 and state.config.numbers then
+    word = tostring(math.random(1, 1000))
+  else
+    word = words[math.random(1, #words)]
+  end
+
+  return word
+end
 
 M.words_to_lines = function()
   local lines = {}
@@ -12,7 +25,7 @@ M.words_to_lines = function()
     local lineLength = 0
 
     while lineLength < maxw do
-      local word = words[math.random(1, #words)]
+      local word = M.gen_word()
       if lineLength + #word + 1 > maxw then
         break
       end
@@ -20,8 +33,7 @@ M.words_to_lines = function()
       lineLength = lineLength + #word + 1 -- +1 for the space
     end
 
-    local line = table.concat(lineWords, " ")
-    table.insert(lines, line)
+    table.insert(lines, table.concat(lineWords, " "))
   end
 
   return lines
