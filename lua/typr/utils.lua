@@ -3,14 +3,27 @@ local state = require "typr.state"
 local words = require "typr.constants.words"
 local volt = require "volt"
 
+local gen_random_word = function()
+  local word = ""
+  local length = math.random(1, 7)
+
+  for _ = 1, length do
+    local randomChar = string.char(math.random(97, 122))
+    word = word .. randomChar
+  end
+
+  return word
+end
+
 M.gen_word = function()
   local word
   local frequency = math.random(1, 4)
+  local config = state.config
 
   if frequency == 4 and state.config.numbers then
     word = tostring(math.random(1, 1000))
   else
-    word = words[math.random(1, #words)]
+    word = config.random and gen_random_word() or words[math.random(1, #words)]
   end
 
   return word

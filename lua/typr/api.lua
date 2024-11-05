@@ -15,6 +15,14 @@ M.toggle_numbers = function()
   volt.redraw(state.buf, "words")
 end
 
+
+M.random_words = function()
+  state.config.random = not state.config.random
+  volt.redraw(state.buf, "headerbtns")
+  utils.gen_default_lines()
+  volt.redraw(state.buf, "words")
+end
+
 M.set_linecount = function(x)
   local diff = x - state.linecount
   state.linecount = x

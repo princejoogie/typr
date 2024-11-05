@@ -13,6 +13,7 @@ local M = {
   config = {
     numbers = false,
     punctuation = false,
+    random = false,
   },
 
   stats = {

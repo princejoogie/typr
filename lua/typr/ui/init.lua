@@ -7,7 +7,7 @@ M.words = function()
   return state.ui_lines
 end
 
-local spaces = { string.rep(" ", 26) }
+local spaces = { string.rep(" ", 15) }
 
 M.headerbtns = function()
   local hovermark = vim.g.nvmark_hovered
@@ -33,6 +33,16 @@ M.headerbtns = function()
     },
   }
 
+  local randombtn = {
+    "   Random ",
+    (config.random or hovermark == "random_m") and "exgreen" or "normal",
+
+    {
+      hover = { id = "random_m", redraw = "headerbtns" },
+      click = api.random_words,
+    },
+  }
+
   local linesbtn = { "  Lines ", "exred" }
 
   local setline = function(x)
@@ -48,6 +58,7 @@ M.headerbtns = function()
       { "│ ", "comment" },
       puncbtn,
       numbtn,
+      randombtn,
       spaces,
       linesbtn,
 
