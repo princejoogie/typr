@@ -17,8 +17,25 @@ M.initialize_volt = function()
 end
 
 M.open = function()
+  require "typr.ui.hl"
+
   state.buf = api.nvim_create_buf(false, true)
+
   local dim_buf = api.nvim_create_buf(false, true)
+
+  local dim_win = api.nvim_open_win(dim_buf, false, {
+    focusable = false,
+    row = 0,
+    col = 0,
+    width = vim.o.columns,
+    height = vim.o.lines - 2,
+    relative = "editor",
+    style = "minimal",
+    border = "none",
+  })
+
+  vim.wo[dim_win].winblend = 20
+
   utils.gen_default_lines()
 
   M.initialize_volt()
@@ -33,15 +50,13 @@ M.open = function()
     relative = "editor",
     style = "minimal",
     border = "single",
-    -- title = { { " Typr ", "ExBlack3bg" } },
-    -- title_pos = "center",
     zindex = 100,
   })
 
   api.nvim_win_set_hl_ns(state.win, state.ns)
 
-  api.nvim_set_hl(state.ns, "FloatBorder", { link = "Exdarkborder" })
-  api.nvim_set_hl(state.ns, "Normal", { link = "ExdarkBg" })
+  api.nvim_set_hl(state.ns, "FloatBorder", { link = "typrborder" })
+  api.nvim_set_hl(state.ns, "Normal", { link = "typrnormal" })
 
   api.nvim_set_current_win(state.win)
 
@@ -59,13 +74,13 @@ M.open = function()
     after_close = function()
       state.timer:stop()
     end,
-    -- bufs = { state.buf, k },
   }
+
   vim.bo[state.buf].filetype = "typr"
   vim.bo[state.buf].ma = true
   vim.wo[state.win].virtualedit = "all"
 
-  api.nvim_win_set_cursor(state.win, { state.words_row+1, state.xpad })
+  api.nvim_win_set_cursor(state.win, { state.words_row + 1, state.xpad })
 
   api.nvim_buf_attach(state.buf, false, {
     on_lines = function(_, _, _, line)
@@ -86,7 +101,6 @@ M.open = function()
       })
 
       state.lastchar = curline:sub(-1)
-      -- volt.redraw(state.buf, "keyboard")
     end,
   })
 
