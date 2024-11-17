@@ -1,15 +1,18 @@
 local M = {}
 local state = require "typr.state"
+local config = state.config
 local voltui = require "volt.ui"
 
 local tmp_stats = {
   times = 5,
-  total_secs = 1201221,
+  total_secs = 3001,
 
   wpm = {
     avg = 70,
     max = 120,
   },
+
+  accuracy = 60,
 
   history = {
     {
@@ -26,10 +29,22 @@ table.insert(tmp_stats.history, tmp_stats.history[1])
 table.insert(tmp_stats.history, tmp_stats.history[1])
 table.insert(tmp_stats.history, tmp_stats.history[1])
 
-local function secsToHHMM(secs)
-  local hours = math.floor(secs / 3600)
+local function secsTodhm(secs)
+  local days = math.floor(secs / 86400)
+  local hours = math.floor((secs % 86400) / 3600)
   local minutes = math.floor((secs % 3600) / 60)
-  return string.format("%02d:%02d", hours, minutes)
+  return string.format("%02d:%02d:%02d", days, hours, minutes)
+end
+
+local function get_lvlstats(my_secs, wpm_ratio)
+  local level = math.floor(my_secs / 1000)
+  local next_lvl = (level + 1) * 1000
+  local next_perc = math.floor(((my_secs + wpm_ratio) / next_lvl) * 100)
+
+  return {
+    val = level,
+    next_perc =100- next_perc,
+  }
 end
 
 local function readable_date(timestamp)
@@ -37,58 +52,88 @@ local function readable_date(timestamp)
   return string.format("%02d-%02d-%04d %02d:%02d", date.day, date.month, date.year, date.hour, date.min)
 end
 
-M.stats = function()
-  local v = (tmp_stats.wpm.avg / state.config.wpm_goal) * 100
+M.chadstack = function()
+  local barlen = state.w_with_pad / 3 - 1
+  local wpm_progress = (tmp_stats.wpm.avg / config.wpm_goal) * 100
 
-  local wpm_progress = voltui.progressbar {
-    w = state.w_with_pad / 3 - 2,
-    val = v > 100 and 100 or v,
-    icon = { on = "|", off = "|" },
+  local wpm_stats = {
+    { { "", "exgreen" }, { "  WPM ~ " }, { tostring(tmp_stats.wpm.avg) .. " / " .. tostring(config.wpm_goal) } },
+    {},
+    voltui.progressbar {
+      w = barlen,
+      val = wpm_progress > 100 and 100 or wpm_progress,
+      icon = { on = "┃", off = "┃" },
+      hl = { on = "exgreen", off = "linenr" },
+    },
   }
 
-  local function bru()
-    print "stats 1?"
-    -- require("volt").redraw(state.statsbuf, "stats")
-  end
-
-  return {
-    { { "  WPM ~ ", "", bru }, { "80" } },
+  local accuracy_stats = {
+    { { "", "exred" }, { "  Accuracy ~ " }, { tostring(tmp_stats.accuracy) .. " %" } },
     {},
-    wpm_progress,
+    voltui.progressbar {
+      w = barlen,
+      val = tmp_stats.accuracy,
+      icon = { on = "┃", off = "┃" },
+    },
+  }
+
+  local lvl_stats = get_lvlstats(tmp_stats.total_secs, tmp_stats.accuracy)
+  vim.print(lvl_stats)
+
+  local lvl_stats_ui = {
+    { { "", "exyellow" }, { "  Level ~ " }, { tostring(lvl_stats.val) } },
+    {},
+    voltui.progressbar {
+      w = barlen,
+      val = lvl_stats.next_perc,
+      hl = { on = "exyellow" },
+      icon = { on = "┃", off = "┃" },
+    },
+  }
+
+  return voltui.grid_col {
+    { lines = wpm_stats, w = barlen, pad = 2 },
+    { lines = accuracy_stats, w = barlen, pad = 2 },
+    { lines = lvl_stats_ui, w = barlen },
   }
 end
 
-M.chadstack = function()
-  return voltui.grid_col {
-    { lines = M.stats(), w = (state.w_with_pad / 3), pad = 1 },
-    { lines = M.stats(), w = (state.w_with_pad / 3), pad = 1 },
-    { lines = M.stats(), w = (state.w_with_pad / 3) },
+M.tabular_stats = function()
+  local tb = {
+    {
+      "  Total time typed",
+      "  Tests",
+      "  Highest WPM",
+    },
+
+    {
+      secsTodhm(tmp_stats.total_secs),
+      "2100",
+      "120 WPM",
+    },
   }
+
+  return voltui.table(tb, state.w_with_pad)
 end
 
 M.history = function()
   local history_tb = tmp_stats.history
-
-  local mytable = {
-
-    -- { "  WPM", "  Accuracy", "  Correct word ratio" },
-
-    { "  WPM", "  Raw", "  Accuracy", "  Time Taken", "  Date" },
+  local tb = {
+    { "  WPM", "  Accuracy", "  Time Taken", "  Date" },
   }
 
   for _, data in ipairs(history_tb) do
     local row = {
       data.wpm,
-      data.raw,
       data.accuracy .. " %",
       (data.timetaken .. " secs"),
       readable_date(data.timestamp),
     }
 
-    table.insert(mytable, row)
+    table.insert(tb, row)
   end
 
-  return voltui.table(mytable, state.w_with_pad)
+  return voltui.table(tb, state.w_with_pad)
 end
 
 return M

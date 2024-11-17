@@ -35,18 +35,24 @@ return {
   empty_line,
 
   {
-    lines = function()
-      return {
-        { { "                          History of Last 5 tests :" } },
-      }
-    end,
-    name = "History label",
+    lines = ui.tabular_stats,
+    name = "tabular_stats",
   },
 
-  {
-    lines = ui.history,
-    name = "history",
-  },
+  -- empty_line,
+  -- {
+  --   lines = function()
+  --     return {
+  --       { { "                          History of Last 5 tests :" } },
+  --     }
+  --   end,
+  --   name = "History label",
+  -- },
+  --
+  -- {
+  --   lines = ui.history,
+  --   name = "history",
+  -- },
 
   -- border("bline1", "down"),
 }
