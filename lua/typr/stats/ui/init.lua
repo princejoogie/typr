@@ -5,15 +5,10 @@ local voltui = require "volt.ui"
 local tmp_stats = {
   times = 5,
   total_secs = 1201221,
+
   wpm = {
-    avg = 89,
-    min = 49,
-    max = 139,
-  },
-  accuracy = {
-    avg = 60,
-    min = 20,
-    max = 80,
+    avg = 70,
+    max = 120,
   },
 
   history = {
@@ -43,9 +38,11 @@ local function readable_date(timestamp)
 end
 
 M.stats = function()
+  local v = (tmp_stats.wpm.avg / state.config.wpm_goal) * 100
+
   local wpm_progress = voltui.progressbar {
-    w = state.w_with_pad / 3 -2,
-    val = 30,
+    w = state.w_with_pad / 3 - 2,
+    val = v > 100 and 100 or v,
     icon = { on = "|", off = "|" },
   }
 
@@ -63,8 +60,8 @@ end
 
 M.chadstack = function()
   return voltui.grid_col {
-    { lines = M.stats(), w = (state.w_with_pad / 3), pad= 1 },
-    { lines = M.stats(), w = (state.w_with_pad / 3), pad=1 },
+    { lines = M.stats(), w = (state.w_with_pad / 3), pad = 1 },
+    { lines = M.stats(), w = (state.w_with_pad / 3), pad = 1 },
     { lines = M.stats(), w = (state.w_with_pad / 3) },
   }
 end

@@ -6,7 +6,9 @@ local volt = require "volt"
 local utils = require "typr.utils"
 local voltstate = require "volt.state"
 
-M.setup = function(opts) end
+M.setup = function(opts)
+  state.config = vim.tbl_deep_extend("force", state.config, opts or {})
+end
 
 M.initialize_volt = function()
   volt.gen_data {

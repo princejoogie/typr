@@ -12,6 +12,7 @@ local M = {
   secs = 0,
 
   config = {
+    wpm_goal = 200,
     numbers = false,
     punctuation = false,
     random = false,
