@@ -2,6 +2,7 @@ local M = {}
 local state = require "typr.state"
 local words = require "typr.constants.words"
 local volt = require "volt"
+local typrstat_utils = require "typr.stats.utils"
 
 local gen_random_word = function()
   local word = ""
@@ -133,21 +134,23 @@ end
 
 M.get_accuracy = function()
   local lines = state.ui_lines
-
-  local abc = ""
+  local mystr = ""
 
   for _, line in ipairs(lines) do
     for _, val in ipairs(line) do
       if val[2] == "Added" then
-        abc = abc .. val[1]
+        mystr = mystr .. val[1]
       end
     end
   end
 
-  local abclen = #abc:gsub("%s+", "")
-  local default_words = table.concat(state.default_lines):gsub("%s+", "")
-  local accuracy = (abclen / #default_words) * 100
+  local mystrlen = #mystr:gsub("%s+", "")
+  local default_words = #table.concat(state.default_lines):gsub("%s+", "")
+  local accuracy = (mystrlen / default_words) * 100
+
   state.stats.accuracy = math.floor(accuracy)
+  state.stats.total_char_count = default_words
+  state.stats.typed_char_count = mystrlen
 end
 
 M.start_timer = function()
@@ -188,6 +191,9 @@ M.on_finish = function()
 
   require("typr").initialize_volt()
   volt.redraw(state.buf, "all")
+
+  state.stats.time = os.time()
+  typrstat_utils.save(state.stats)
 end
 
 return M

@@ -6,8 +6,6 @@ local volt = require "volt"
 local utils = require "typr.utils"
 local voltstate = require "volt.state"
 
-state.ns = api.nvim_create_namespace "Typr"
-
 M.setup = function(opts) end
 
 M.initialize_volt = function()
@@ -105,6 +103,7 @@ M.open = function()
   })
 
   require "typr.mappings"
+  require("typr.stats.utils").restore_stats()
 end
 
 return M
