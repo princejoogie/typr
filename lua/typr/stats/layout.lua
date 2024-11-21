@@ -39,6 +39,13 @@ return {
     name = "tabular_stats",
   },
 
+  empty_line,
+  {
+    lines = ui.graph,
+    name='graph',
+  },
+
+
   -- empty_line,
   -- {
   --   lines = function()

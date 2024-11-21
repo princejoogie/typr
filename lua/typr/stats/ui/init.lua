@@ -43,7 +43,7 @@ local function get_lvlstats(my_secs, wpm_ratio)
 
   return {
     val = level,
-    next_perc =100- next_perc,
+    next_perc = 100 - next_perc,
   }
 end
 
@@ -78,7 +78,6 @@ M.chadstack = function()
   }
 
   local lvl_stats = get_lvlstats(tmp_stats.total_secs, tmp_stats.accuracy)
-  vim.print(lvl_stats)
 
   local lvl_stats_ui = {
     { { "", "exyellow" }, { "  Level ~ " }, { tostring(lvl_stats.val) } },
@@ -134,6 +133,39 @@ M.history = function()
   end
 
   return voltui.table(tb, state.w_with_pad)
+end
+
+M.graph = function()
+  local wpm_graph_data = {
+    val = { 60, 20, 80, 70, 30, 10, 30, 50, 20, 40 },
+    footer_label = { " Last 10 WPM stats" },
+
+    format_labels = function(x)
+      return tostring((x / 100) * 150)
+    end,
+
+    baropts = {
+      w = 2,
+      gap = 1,
+      hl = "exgreen",
+      dual_hl = { "exlightgrey", "comment" },
+      -- format_hl = function(x)
+      --   return x > 50 and "exred" or "normal"
+      -- end,
+    },
+    w = state.w_with_pad / 2,
+  }
+
+  local accuracy_graph_data = {
+    val = { 60, 20, 80, 70, 30, 10, 30, 50, 20, 40 },
+    w = state.w_with_pad / 2,
+    footer_label = { "Last 10 Accuracy stats" },
+  }
+
+  return voltui.grid_col {
+    { lines = voltui.graphs.bar(wpm_graph_data), w = state.w_with_pad / 2, pad = 0 },
+    { lines = voltui.graphs.dot(accuracy_graph_data), w = state.w_with_pad / 2, pad = 0 },
+  }
 end
 
 return M
