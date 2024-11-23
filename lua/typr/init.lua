@@ -8,6 +8,7 @@ local voltstate = require "volt.state"
 
 M.setup = function(opts)
   state.config = vim.tbl_deep_extend("force", state.config, opts or {})
+  require("typr.stats.utils").restore_stats()
 end
 
 M.initialize_volt = function()
@@ -105,7 +106,6 @@ M.open = function()
   })
 
   require "typr.mappings"
-  require("typr.stats.utils").restore_stats()
 end
 
 return M

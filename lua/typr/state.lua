@@ -1,5 +1,5 @@
 local M = {
-  ns=vim.api.nvim_create_namespace "Typr",
+  ns = vim.api.nvim_create_namespace "Typr",
   xpad = 2,
   w = 80,
   h = 20,
@@ -26,8 +26,6 @@ local M = {
     total_char_count = 0,
     typed_char_count = 0,
   },
-
-  stats_history = {},
 }
 
 M.w_with_pad = M.w - (2 * M.xpad)

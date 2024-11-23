@@ -128,8 +128,10 @@ M.count_correct_words = function()
     end
   end
 
-  state.stats.correct_word_ratio = count .. " / " .. (count + unmatched_count)
+  local total_words = count + unmatched_count
+  state.stats.correct_word_ratio = count .. " / " .. total_words
   state.stats.wpm = math.floor((count / state.secs) * 60)
+  state.stats.rawpm = math.floor((total_words / state.secs) * 60)
 end
 
 M.get_accuracy = function()
@@ -192,8 +194,7 @@ M.on_finish = function()
   require("typr").initialize_volt()
   volt.redraw(state.buf, "all")
 
-  state.stats.time = os.time()
-  typrstat_utils.save(state.stats)
+  require("typr.stats.utils").save()
 end
 
 return M

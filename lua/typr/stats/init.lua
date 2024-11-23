@@ -4,11 +4,9 @@ local state = require "typr.state"
 local volt = require "volt"
 local voltstate = require "volt.state"
 local layout = require "typr.stats.layout"
-local typrutils = require "typr.stats.utils"
 
 M.open = function()
   require "typr.ui.hl"
-  typrutils.restore_stats()
 
   state.statsbuf = api.nvim_create_buf(false, true)
 

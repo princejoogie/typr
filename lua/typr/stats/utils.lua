@@ -1,48 +1,93 @@
 local M = {}
 local state = require "typr.state"
+local stats_state = require "typr.stats.state"
+
+M.gen_default_stats = function()
+  local default_stats = {
+    times = 0,
+    total_secs = 0,
+    rawpm = 0,
+    wpm = { avg = 0, max = 0, min = 0 },
+    accuracy = 0,
+    rawpm_hist = {},
+    wpm_hist = {},
+    accuracy_hist = {},
+  }
+
+  for i = 1, 30 do
+    if i <= 10 then
+      table.insert(default_stats.wpm_hist, 0)
+      table.insert(default_stats.accuracy_hist, 0)
+    end
+
+    table.insert(default_stats.rawpm_hist, 0)
+  end
+
+  return default_stats
+end
+
+M.save_str_tofile = function(tb)
+  local str = "'" .. vim.json.encode(tb) .. "'"
+
+  local data = "return string.dump(function()return" .. str .. "end, true)"
+  local path = state.config.stats_filepath
+  local file = io.open(path, "wb")
+  file:write(loadstring(data)())
+  file:close()
+end
 
 M.restore_stats = function()
   local path = state.config.stats_filepath
   local ok, stats = pcall(dofile, path)
-  state.stats_history = ok and stats or {}
-end
 
-M.dict_to_str = function(tb)
-  local str = "{"
-
-  for k, v in pairs(tb) do
-    local key = "['" .. k .. "']"
-    local val = type(v) == "string" and '"' .. v .. '"' or v
-    local keyval = key .. "=" .. val .. ","
-    str = str .. keyval
+  if not ok then
+    stats = M.gen_default_stats()
+    M.save_str_tofile(stats)
   end
 
-  return str .. "}"
+  -- vim.print(vim.json.decode(chad))
+  stats_state.val = vim.json.decode(stats)
+  vim.print(stats_state.val)
 end
 
-M.tb_to_str = function(tb)
-  local str = "return {"
+M.save = function()
+  local stats = state.stats
+  local tmp = stats_state.val
 
-  for _, v in ipairs(tb) do
-    str = str .. M.dict_to_str(v) .. ","
+  tmp.times = tmp.times + 1
+  local oldtimes = tmp.times - 1
+  local times = tmp.times
+
+  -- calc wpm
+  tmp.wpm.avg = ((tmp.wpm.avg * oldtimes) + stats.wpm) / times
+  tmp.wpm.avg = math.floor(tmp.wpm.avg)
+  tmp.wpm.max = (stats.wpm > tmp.wpm.max and stats.wpm) or tmp.wpm.max
+
+  if tmp.wpm.min == 0 then
+    tmp.wpm.min = stats.wpm
+  else
+    tmp.wpm.min = (stats.wpm < tmp.wpm.min and stats.wpm) or tmp.wpm.min
   end
 
-  str = str .. "}"
+  table.insert(tmp.wpm_hist, 1, tmp.wpm)
+  table.remove(tmp.wpm_hist)
 
-  return "return string.dump(function()" .. str .. "end, true)"
-end
+  -- calc rawpm
+  tmp.rawpm = ((tmp.rawpm * oldtimes) + stats.rawpm) / times
+  tmp.rawpm = math.floor(tmp.rawpm)
+  table.insert(tmp.rawpm_hist, 1, tmp.rawpm)
+  table.remove(tmp.rawpm_hist)
 
-M.save = function(stat)
-  table.insert(state.stats_history, stat)
+  -- calc accuracy
+  tmp.accuracy = ((tmp.accuracy * oldtimes) + stats.accuracy) / times
+  tmp.accuracy = math.floor(tmp.accuracy)
 
-  local path = state.config.stats_filepath
-  local data = M.tb_to_str(state.stats_history)
+  table.insert(tmp.accuracy_hist, 1, tmp.accuracy)
+  table.remove(tmp.accuracy_hist)
 
-  local file = io.open(path, "wb")
-  file:write(loadstring(data)())
-  file:close()
-
-  M.restore_stats()
+  tmp.total_secs = tmp.total_secs + state.secs
+  stats_state.val = tmp
+  M.save_str_tofile(tmp)
 end
 
 return M
