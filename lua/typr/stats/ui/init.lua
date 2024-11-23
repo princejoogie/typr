@@ -13,21 +13,7 @@ local tmp_stats = {
   },
 
   accuracy = 60,
-
-  history = {
-    {
-      wpm = 38.40,
-      raw = 44.41,
-      accuracy = 60,
-      timestamp = 1731765938,
-      timetaken = 50,
-    },
-  },
 }
-
-table.insert(tmp_stats.history, tmp_stats.history[1])
-table.insert(tmp_stats.history, tmp_stats.history[1])
-table.insert(tmp_stats.history, tmp_stats.history[1])
 
 local function secsTodhm(secs)
   local days = math.floor(secs / 86400)
@@ -47,12 +33,7 @@ local function get_lvlstats(my_secs, wpm_ratio)
   }
 end
 
-local function readable_date(timestamp)
-  local date = os.date("*t", timestamp)
-  return string.format("%02d-%02d-%04d %02d:%02d", date.day, date.month, date.year, date.hour, date.min)
-end
-
-M.chadstack = function()
+M.progress = function()
   local barlen = state.w_with_pad / 3 - 1
   local wpm_progress = (tmp_stats.wpm.avg / config.wpm_goal) * 100
 
@@ -100,37 +81,19 @@ end
 M.tabular_stats = function()
   local tb = {
     {
-      "  Total time typed",
+      "  Total time",
       "  Tests",
+      "  Lowest WPM",
       "  Highest WPM",
     },
 
     {
       secsTodhm(tmp_stats.total_secs),
       "2100",
+      "60 WPM",
       "120 WPM",
     },
   }
-
-  return voltui.table(tb, state.w_with_pad)
-end
-
-M.history = function()
-  local history_tb = tmp_stats.history
-  local tb = {
-    { "  WPM", "  Accuracy", "  Time Taken", "  Date" },
-  }
-
-  for _, data in ipairs(history_tb) do
-    local row = {
-      data.wpm,
-      data.accuracy .. " %",
-      (data.timetaken .. " secs"),
-      readable_date(data.timestamp),
-    }
-
-    table.insert(tb, row)
-  end
 
   return voltui.table(tb, state.w_with_pad)
 end
@@ -166,6 +129,32 @@ M.graph = function()
     { lines = voltui.graphs.bar(wpm_graph_data), w = state.w_with_pad / 2, pad = 0 },
     { lines = voltui.graphs.dot(accuracy_graph_data), w = state.w_with_pad / 2, pad = 0 },
   }
+end
+
+
+M.rawpm = function()
+  local m = { 60, 20, 80, 70, 30, 20, 80, 70, 30, 80, 70, 30,50  }
+  local n = { 60, 20, 80, 70, 30, 20, 80, 70, 30, 80, 70, unpack(m)  }
+
+  local wpm_graph_data = {
+    val = { 60, 20, 80, 70, 30, 10, 30, 50, 20, 40, unpack(n) },
+    footer_label = { " Last 20 RAW WPM stats" },
+
+    format_labels = function(x)
+      return tostring((x / 100) * 150)
+    end,
+
+    baropts = {
+      w = 1,
+      gap = 1,
+      format_hl = function(x)
+        return x > 30 and "exred" or "normal"
+      end,
+    },
+    w = state.w_with_pad / 2,
+  }
+
+  return voltui.graphs.bar(wpm_graph_data)
 end
 
 return M
