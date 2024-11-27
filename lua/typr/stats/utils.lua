@@ -12,6 +12,7 @@ M.gen_default_stats = function()
     rawpm_hist = {},
     wpm_hist = {},
     accuracy_hist = {},
+    char_accuracy = {},
   }
 
   for i = 1, 30 do
@@ -40,14 +41,12 @@ M.restore_stats = function()
   local path = state.config.stats_filepath
   local ok, stats = pcall(dofile, path)
 
-  if not ok then
-    stats = M.gen_default_stats()
-    M.save_str_tofile(stats)
+  if ok then
+    stats_state.val = vim.json.decode(stats)
+  else
+    stats_state.val = M.gen_default_stats()
+    M.save_str_tofile(stats_state.val)
   end
-
-  -- vim.print(vim.json.decode(chad))
-  stats_state.val = vim.json.decode(stats)
-  vim.print(stats_state.val)
 end
 
 M.save = function()
@@ -86,6 +85,15 @@ M.save = function()
   table.remove(tmp.accuracy_hist)
 
   tmp.total_secs = tmp.total_secs + state.secs
+
+  -- calc wrong chars
+  for k, v in pairs(stats.char_accuracy) do
+    local char_avg = tmp.char_accuracy[k] or 100
+
+    tmp.char_accuracy[k] = ((char_avg * oldtimes) + v) / times
+    tmp.char_accuracy[k] = math.floor(tmp.char_accuracy[k])
+  end
+
   stats_state.val = tmp
   M.save_str_tofile(tmp)
 end

@@ -6,8 +6,6 @@ local voltstate = require "volt.state"
 local layout = require "typr.stats.layout"
 
 M.open = function()
-  require "typr.ui.hl"
-
   state.statsbuf = api.nvim_create_buf(false, true)
 
   volt.gen_data {
@@ -32,7 +30,7 @@ M.open = function()
   state.h = voltstate[state.statsbuf].h
 
   state.win = api.nvim_open_win(state.statsbuf, true, {
-    row = (vim.o.lines / 2) - (state.h / 2),
+    row = (vim.o.lines / 2) - (state.h / 2) - 2,
     col = (vim.o.columns / 2) - (state.w / 2),
     width = state.w,
     height = state.h,
@@ -54,11 +52,13 @@ M.open = function()
     w = state.w_with_pad,
   })
 
+  require ("typr.ui.hl")(state.ns)
+
   volt.mappings {
     bufs = { state.statsbuf, dim_buf },
   }
 
-  require("volt.events").add(state.statsbuf)
+  vim.bo[state.statsbuf].filetype = "typrstats"
 end
 
 return M

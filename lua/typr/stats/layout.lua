@@ -32,7 +32,13 @@ return {
 
   empty_line,
   {
-    lines = ui.rawpm,
-    name = "rawpm",
+    lines = ui.keys_accuracy,
+    name = "keys_accuracy",
   },
+  
+
+  -- {
+  --   lines = ui.rawpm,
+  --   name = "rawpm",
+  -- },
 }

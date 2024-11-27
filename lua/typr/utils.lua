@@ -155,6 +155,43 @@ M.get_accuracy = function()
   state.stats.typed_char_count = mystrlen
 end
 
+M.char_accuracy = function()
+  local userlines = vim.tbl_map(function(line)
+    local userwords = vim.tbl_map(function(v)
+      return v[1]
+    end, line)
+
+    local userstrs = table.concat(userwords, "")
+
+    return vim.split(userstrs, "")
+  end, state.ui_lines)
+
+  local default_lines = vim.tbl_map(function(line)
+    return vim.split(line, "")
+  end, state.default_lines)
+
+  local wrongchars = {}
+  local rightchars = {}
+  local result = {}
+
+  for i, line in ipairs(default_lines) do
+    for j, char in ipairs(line) do
+      if userlines[i][j] == char then
+        rightchars[char] = (rightchars[char] or 0) + 1
+      else
+        wrongchars[char] = (wrongchars[char] or 0) + 1
+      end
+    end
+  end
+
+  for key, val in pairs(rightchars) do
+    local sum = (wrongchars[key] or 0) + val
+    result[key] = math.floor((val / sum) * 100)
+  end
+
+  state.stats.char_accuracy = result
+end
+
 M.start_timer = function()
   state.timer:start(
     0,
@@ -186,6 +223,7 @@ M.on_finish = function()
 
   M.get_accuracy()
   M.count_correct_words()
+  M.char_accuracy()
 
   state.h = state.h + 2
   vim.api.nvim_win_set_height(state.win, state.h)

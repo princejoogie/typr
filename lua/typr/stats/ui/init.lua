@@ -2,6 +2,7 @@ local M = {}
 local state = require "typr.state"
 local config = state.config
 local voltui = require "volt.ui"
+local stats = require "typr.stats.state"
 
 local tmp_stats = {
   times = 5,
@@ -131,10 +132,9 @@ M.graph = function()
   }
 end
 
-
 M.rawpm = function()
-  local m = { 60, 20, 80, 70, 30, 20, 80, 70, 30, 80, 70, 30,50  }
-  local n = { 60, 20, 80, 70, 30, 20, 80, 70, 30, 80, 70, unpack(m)  }
+  local m = { 60, 20, 80, 70, 30, 20, 80, 70, 30, 80, 70, 30, 50 }
+  local n = { 60, 20, 80, 70, 30, 20, 80, 70, 30, 80, 70, unpack(m) }
 
   local wpm_graph_data = {
     val = { 60, 20, 80, 70, 30, 10, 30, 50, 20, 40, unpack(n) },
@@ -155,6 +155,67 @@ M.rawpm = function()
   }
 
   return voltui.graphs.bar(wpm_graph_data)
+end
+
+local border_chars = {
+  mid = { top = "┬", bot = "┴", none = "┼" },
+  corners_left = { top = "┌", bot = "└", none = "├" },
+  corners_right = { top = "┐", bot = "┘", none = "┤" },
+  vline = "│",
+}
+
+M.keys_accuracy = function()
+  local x = stats.val.char_accuracy
+
+  -- Create a table with letters A to Z
+  local alphabet = {
+    { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j" },
+    { "k", "l", "m", "n", "o", "p", "q", "r", "s", "t" },
+    { "u", "v", "w", "x", "y", "z" },
+  }
+
+  local lines = {}
+  local line = string.rep("─", (10 * 4) + 1)
+
+  for i, v in ipairs(alphabet) do
+    local row = {}
+
+    for _, letter in ipairs(v) do
+      local score = x[letter] or 100
+      local hl = score == 100 and "TyprGrey" or "TyprRed"
+
+      if(score > 90 and score < 100) then
+        hl = "TyprYellow"
+      end
+
+      table.insert(row, { " " .. letter:upper() .. " ", hl })
+      table.insert(row, { " " })
+    end
+
+    if i ~= 3 then
+      table.remove(row)
+    end
+
+    if i == 3 then
+      table.insert(row, { "       󱁐       ", "typrgrey" })
+    end
+
+    if i ~= 1 then
+      table.insert(lines, { { border_chars.corners_left.none .. line .. border_chars.corners_right.none, "linenr" } })
+    end
+
+    table.insert(row, 1, { border_chars.vline .. " ", "linenr" })
+    table.insert(row, { " " .. border_chars.vline, "linenr" })
+    table.insert(lines, row)
+
+    if i == 1 then
+      table.insert(lines, 1, { { border_chars.corners_left.top .. line .. border_chars.corners_right.top, "linenr" } })
+    elseif i == 3 then
+      table.insert(lines, { { border_chars.corners_left.bot .. line .. border_chars.corners_right.bot, "linenr" } })
+    end
+  end
+
+  return lines
 end
 
 return M

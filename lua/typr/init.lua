@@ -18,12 +18,11 @@ M.initialize_volt = function()
 end
 
 M.open = function()
-  require "typr.ui.hl"
+  require "typr.ui.hl"(0)
 
   state.buf = api.nvim_create_buf(false, true)
 
   local dim_buf = api.nvim_create_buf(false, true)
-
   local dim_win = api.nvim_open_win(dim_buf, false, {
     focusable = false,
     row = 0,
