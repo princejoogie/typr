@@ -25,6 +25,7 @@ local M = {
     correct_word_ratio = "?",
     total_char_count = 0,
     typed_char_count = 0,
+    char_times = {},
   },
 }
 

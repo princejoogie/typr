@@ -184,7 +184,7 @@ M.keys_accuracy = function()
       local score = x[letter] or 100
       local hl = score == 100 and "TyprGrey" or "TyprRed"
 
-      if(score > 90 and score < 100) then
+      if score > 90 and score < 100 then
         hl = "TyprYellow"
       end
 
@@ -215,7 +215,68 @@ M.keys_accuracy = function()
     end
   end
 
-  return lines
+  table.insert(lines, 1, { { "   Average of Key Accuracies" } })
+
+  local indicators = {
+    { { "" } },
+    { { "" } },
+    { { "󱓻 ", "comment" }, { "100% accuracy!" } },
+    { { "󱓻 ", "exyellow" }, { "Less than 90%" } },
+    { { "󱓻 ", "exred" }, { "Less than 80%" } },
+    { { "" } },
+    { { "Inaccurate keys: ", "exred" }, { "a z i", "exlightgrey" } },
+  }
+
+  return voltui.grid_col {
+    { lines = lines, w = state.w_with_pad - 32, pad = 2 },
+    { lines = indicators, w = 20 },
+  }
+end
+
+local slice_tb = function(tb, start, stop)
+  local result = {}
+
+  local kek = start > stop and -1 or 1
+
+  for i = start, stop, kek do
+    table.insert(result, tb[i])
+  end
+
+  return result
+end
+
+M.char_times = function()
+  local char_times = stats.val.char_times
+  local list = {}
+
+  for k, v in pairs(char_times) do
+    table.insert(list, { k, v })
+  end
+
+  table.sort(list, function(a, b)
+    return a[2] > b[2]
+  end)
+
+  local tb1 = slice_tb(list, 1, 5)
+  table.insert(tb1, 1, { "Key", "Time" })
+
+  tb1 = vim.tbl_map(function(x)
+    return { { x[1], "exred" }, x[2] }
+  end, tb1)
+
+  local tb2 = slice_tb(list, #list, #list - 4)
+  table.insert(tb2, 1, { "Key", "Time" })
+
+  tb2 = vim.tbl_map(function(x)
+    return { { x[1], "exblue" }, x[2] }
+  end, tb2)
+
+  local w = (state.w_with_pad / 2) - 20
+
+  return voltui.grid_col {
+    { lines = voltui.table(tb1, w, 'normal', { "Slowest keys"}), pad = 1, w = w },
+    { lines = voltui.table(tb2, w, 'normal', { "Fastest keys" }), pad = 1, w = w },
+  }
 end
 
 return M

@@ -13,6 +13,7 @@ M.gen_default_stats = function()
     wpm_hist = {},
     accuracy_hist = {},
     char_accuracy = {},
+    char_times = {},
   }
 
   for i = 1, 30 do
@@ -94,7 +95,14 @@ M.save = function()
     tmp.char_accuracy[k] = math.floor(tmp.char_accuracy[k])
   end
 
+  -- calc char times
+  for k, v in pairs(stats.char_times) do
+    tmp.char_times[k] = (tmp.char_times[k] or 0) + v
+  end
+
   stats_state.val = tmp
+  state.stats.char_times = {}
+
   M.save_str_tofile(tmp)
 end
 

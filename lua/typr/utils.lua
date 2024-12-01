@@ -192,6 +192,19 @@ M.char_accuracy = function()
   state.stats.char_accuracy = result
 end
 
+M.char_times_calc = function()
+  local t = state.stats.char_times
+  local chars = {}
+
+  for _, v in ipairs(t) do
+    if v[1] ~= "" and v[1] ~= " " then
+      chars[v[1]] = (chars[v[1]] or 0) + v[2]
+    end
+  end
+
+  state.stats.char_times = chars
+end
+
 M.start_timer = function()
   state.timer:start(
     0,
@@ -231,6 +244,8 @@ M.on_finish = function()
 
   require("typr").initialize_volt()
   volt.redraw(state.buf, "all")
+
+  M.char_times_calc()
 
   require("typr.stats.utils").save()
 end

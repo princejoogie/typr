@@ -101,6 +101,7 @@ M.open = function()
       })
 
       state.lastchar = curline:sub(-1)
+      table.insert(state.stats.char_times, { state.lastchar, os.clock() })
     end,
   })
 
