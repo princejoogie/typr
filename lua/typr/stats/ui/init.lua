@@ -268,4 +268,42 @@ M.char_times = function()
   }
 end
 
+M.activity_heatmap = function()
+  local months = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" }
+  local days = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" }
+  local hlgroups = { "linenr", "linenr", "exgreen", "typrgreen1", "typrgreen2", "typrgreen3" }
+
+  local lines = { { { "    " } }, {} }
+
+  for i = 1, 12 do
+    table.insert(lines[1], { " " .. months[i] .. " ", "Visual" })
+    table.insert(lines[1], { i == 12 and "  " or "   " })
+  end
+
+  table.insert(lines[2], voltui.separator("─", 48 * 2 + 3)[1])
+
+  for day = 1, 7 do -- 7 weakdays
+    local line = { { days[day] .. " ", "exlightgrey" } }
+
+    for i = 1, 48 do -- 12 months * 4 weeks
+      local a = hlgroups[math.random(1, 6)]
+      local bb = i == 48 and "" or " "
+
+      table.insert(line, { "󱓻" .. bb, a })
+      if i % 4 == 0 then
+      end
+    end
+
+    table.insert(lines, line)
+  end
+
+  voltui.border(lines)
+
+  -- table.insert(lines, 1, {})
+  -- table.insert(lines,1, voltui.separator('-', 48*2 + 4))
+  -- table.insert(lines, 1, {{'Activity Heatmap'}})
+
+  return lines
+end
+
 return M

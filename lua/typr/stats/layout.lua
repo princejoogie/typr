@@ -26,6 +26,8 @@ local rightcol_ui = function()
     ui.keys_accuracy(),
     { {} },
     ui.char_times(),
+    { {} },
+    ui.activity_heatmap(),
   }
 end
 

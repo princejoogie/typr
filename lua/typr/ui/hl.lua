@@ -17,7 +17,7 @@ local function get_hl(name)
   return result
 end
 
-return function(ns)
+return function(ns, winType)
   local bg
 
   if vim.g.base46_cache then
@@ -32,15 +32,21 @@ return function(ns)
   api.nvim_set_hl(ns, "Typrborder", { fg = bg, bg = bg })
   api.nvim_set_hl(ns, "TyprNormal", { bg = bg })
 
-  local exred = get_hl("ExRed").fg
-  api.nvim_set_hl(ns, "TyprRed", { bg = mix(exred, bg, 80), fg = exred })
+  if winType == "stats" then
+    local exred = get_hl("ExRed").fg
+    api.nvim_set_hl(ns, "TyprRed", { bg = mix(exred, bg, 80), fg = exred })
 
-  local exgreen = get_hl("ExGreen").fg
-  api.nvim_set_hl(ns, "TyprGreen", { bg = mix(exgreen, bg, 80), fg = exgreen })
+    local exgreen = get_hl("ExGreen").fg
+    api.nvim_set_hl(ns, "TyprGreen", { bg = mix(exgreen, bg, 80), fg = exgreen })
 
-  local exyellow = get_hl("ExYellow").fg
-  api.nvim_set_hl(ns, "TyprYellow", { bg = mix(exyellow, bg, 80), fg = exyellow })
+    api.nvim_set_hl(ns, "TyprGreen1", { fg = lighten(exgreen, -10) })
+    api.nvim_set_hl(ns, "TyprGreen2", { fg = lighten(exgreen, -20) })
+    api.nvim_set_hl(ns, "TyprGreen3", { fg = lighten(exgreen, -30) })
 
-  local x = vim.o.bg == "dark" and 1 or -1
-  api.nvim_set_hl(ns, "TyprGrey", { bg = lighten(bg, 6 * x), fg = lighten(get_hl("comment").fg, 10 * x) })
+    local exyellow = get_hl("ExYellow").fg
+    api.nvim_set_hl(ns, "TyprYellow", { bg = mix(exyellow, bg, 80), fg = exyellow })
+
+    local x = vim.o.bg == "dark" and 1 or -1
+    api.nvim_set_hl(ns, "TyprGrey", { bg = lighten(bg, 6 * x), fg = lighten(get_hl("comment").fg, 10 * x) })
+  end
 end
