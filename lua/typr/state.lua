@@ -12,6 +12,7 @@ local M = {
   secs = 0,
 
   config = {
+    kblayout = "qwerty",
     wpm_goal = 200,
     numbers = false,
     punctuation = false,

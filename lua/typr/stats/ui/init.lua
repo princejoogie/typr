@@ -3,6 +3,7 @@ local state = require "typr.state"
 local config = state.config
 local voltui = require "volt.ui"
 local stats = require "typr.stats.state"
+local kblayouts = require "typr.constants.kblayouts"
 
 local tmp_stats = {
   times = 5,
@@ -166,18 +167,10 @@ local border_chars = {
 
 M.keys_accuracy = function()
   local x = stats.val.char_accuracy
-
-  -- Create a table with letters A to Z
-  local alphabet = {
-    { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j" },
-    { "k", "l", "m", "n", "o", "p", "q", "r", "s", "t" },
-    { "u", "v", "w", "x", "y", "z" },
-  }
-
   local lines = {}
   local line = string.rep("─", (10 * 4) + 1)
 
-  for i, v in ipairs(alphabet) do
+  for i, v in ipairs(kblayouts[config.kblayout]) do
     local row = {}
 
     for _, letter in ipairs(v) do
@@ -192,13 +185,7 @@ M.keys_accuracy = function()
       table.insert(row, { " " })
     end
 
-    if i ~= 3 then
-      table.remove(row)
-    end
-
-    if i == 3 then
-      table.insert(row, { "       󱁐       ", "typrgrey" })
-    end
+    table.remove(row)
 
     if i ~= 1 then
       table.insert(lines, { { border_chars.corners_left.none .. line .. border_chars.corners_right.none, "linenr" } })
@@ -247,10 +234,12 @@ end
 
 M.char_times = function()
   local char_times = stats.val.char_times
+  local wrong_counts = stats.val.char_accuracy
   local list = {}
 
   for k, v in pairs(char_times) do
-    table.insert(list, { k, v })
+    v = math.floor(v * 10) / 10
+    table.insert(list, { k, v, (wrong_counts[k] or 0) })
   end
 
   table.sort(list, function(a, b)
@@ -271,11 +260,11 @@ M.char_times = function()
     return { { x[1], "exblue" }, x[2] }
   end, tb2)
 
-  local w = (state.w_with_pad / 2) - 20
+  local w = (state.w_with_pad / 2) - 21
 
   return voltui.grid_col {
-    { lines = voltui.table(tb1, w, 'normal', { "Slowest keys"}), pad = 1, w = w },
-    { lines = voltui.table(tb2, w, 'normal', { "Fastest keys" }), pad = 1, w = w },
+    { lines = voltui.table(tb1, w, "normal", { "Slowest keys" }), pad = 1, w = w },
+    { lines = voltui.table(tb2, w, "normal", { "Fastest keys" }), pad = 1, w = w },
   }
 end
 
