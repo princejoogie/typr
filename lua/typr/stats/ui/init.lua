@@ -205,8 +205,6 @@ M.keys_accuracy = function()
   table.insert(lines, 1, { { "   Average of Key Accuracies" } })
 
   local indicators = {
-    { { "" } },
-    { { "" } },
     { { "󱓻 ", "comment" }, { "100% accuracy!" } },
     { { "󱓻 ", "exyellow" }, { "Less than 90%" } },
     { { "󱓻 ", "exred" }, { "Less than 80%" } },
@@ -214,8 +212,11 @@ M.keys_accuracy = function()
     { { "Inaccurate keys: ", "exred" }, { "a z i", "exlightgrey" } },
   }
 
+  voltui.border(indicators, "exred")
+  table.insert(indicators, 1, {})
+
   return voltui.grid_col {
-    { lines = lines, w = state.w_with_pad - 32, pad = 2 },
+    { lines = lines, w = state.w_with_pad - 32, pad = 1 },
     { lines = indicators, w = 20 },
   }
 end
@@ -260,37 +261,51 @@ M.char_times = function()
     return { { x[1], "exblue" }, x[2] }
   end, tb2)
 
-  local w = (state.w_with_pad / 2) - 21
+  local slowest_keys_ui = voltui.table(tb1, "fit", "normal", { "Slowest keys" })
+  local fastest_keys_ui = voltui.table(tb2, "fit", "normal", { "Fastest keys" })
+
+  local w1 = voltui.line_w(slowest_keys_ui[1])
+  local w2 = voltui.line_w(fastest_keys_ui[1])
 
   return voltui.grid_col {
-    { lines = voltui.table(tb1, w, "normal", { "Slowest keys" }), pad = 1, w = w },
-    { lines = voltui.table(tb2, w, "normal", { "Fastest keys" }), pad = 1, w = w },
+    { lines = slowest_keys_ui, pad = 3, w = w1 },
+    { lines = fastest_keys_ui, pad = 2, w = w2 },
   }
 end
 
 M.activity_heatmap = function()
   local months = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" }
   local days = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" }
-  local hlgroups = { "linenr", "linenr", "exgreen", "typrgreen1", "typrgreen2", "typrgreen3" }
+  local hlgroups = { "linenr", "typrgreen3", "typrgreen2", "typrgreen1", "typrgreen0" }
 
-  local lines = { { { "    " } }, {} }
+  local months_n = 7
+  local squares_len = months_n * 4
 
-  for i = 1, 12 do
-    table.insert(lines[1], { " " .. months[i] .. " ", "Visual" })
-    table.insert(lines[1], { i == 12 and "  " or "   " })
+  -- 
+
+  local lines = {
+    { { "   ", "exgreen" }, { "  " } },
+    {},
+  }
+
+  for i = 1, months_n do
+    table.insert(lines[1], { "  " .. months[i] .. "  ", "Visual" })
+    table.insert(lines[1], { i == months_n and "" or "  " })
   end
 
-  table.insert(lines[2], voltui.separator("─", 48 * 2 + 3)[1])
+  local hrline = voltui.separator("─", squares_len * 2 + (months_n - 1 + 5), "exgreen")
+  table.insert(lines[2], hrline[1])
 
   for day = 1, 7 do -- 7 weakdays
-    local line = { { days[day] .. " ", "exlightgrey" } }
+    local line = { { days[day], "exlightgrey" }, { " │ ", "linenr" } }
 
-    for i = 1, 48 do -- 12 months * 4 weeks
-      local a = hlgroups[math.random(1, 6)]
-      local bb = i == 48 and "" or " "
+    for i = 1, squares_len do -- 12 months * 4 weeks
+      local hl = hlgroups[math.random(1, #hlgroups)]
+      local space = i == squares_len and "" or " "
+      table.insert(line, { "󱓻" .. space, hl })
 
-      table.insert(line, { "󱓻" .. bb, a })
       if i % 4 == 0 then
+        table.insert(line, { space })
       end
     end
 
@@ -299,9 +314,14 @@ M.activity_heatmap = function()
 
   voltui.border(lines)
 
-  -- table.insert(lines, 1, {})
-  -- table.insert(lines,1, voltui.separator('-', 48*2 + 4))
-  -- table.insert(lines, 1, {{'Activity Heatmap'}})
+  local header = { { "   Activity" }, { "_pad_" }, { "  Less " } }
+
+  for _, v in ipairs(hlgroups) do
+    table.insert(header, { "󱓻 ", v })
+  end
+
+  table.insert(header, { " More" })
+  table.insert(lines, 1, voltui.hpad(header, 80))
 
   return lines
 end
