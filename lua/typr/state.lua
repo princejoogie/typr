@@ -27,6 +27,7 @@ local M = {
     total_char_count = 0,
     typed_char_count = 0,
     char_times = {},
+    char_pressed = {},
   },
 }
 

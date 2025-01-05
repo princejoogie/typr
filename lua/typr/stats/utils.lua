@@ -14,6 +14,7 @@ M.gen_default_stats = function()
     accuracy_hist = {},
     char_accuracy = {},
     char_times = {},
+    char_pressed = {},
   }
 
   for i = 1, 30 do
@@ -98,6 +99,15 @@ M.save = function()
   -- calc char times
   for k, v in pairs(stats.char_times) do
     tmp.char_times[k] = (tmp.char_times[k] or 0) + v
+  end
+
+  -- calc char pressed
+  for k, v in pairs(stats.char_pressed) do
+    if tmp.char_pressed[k] then
+      tmp.char_pressed[k] = tmp.char_pressed[k] + v
+    else
+      tmp.char_pressed[k] = v
+    end
   end
 
   stats_state.val = tmp

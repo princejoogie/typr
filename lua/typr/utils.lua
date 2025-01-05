@@ -155,6 +155,16 @@ M.get_accuracy = function()
   state.stats.typed_char_count = mystrlen
 end
 
+M.save_char_pressed = function(x)
+  local tmp = state.stats.char_pressed
+
+  if tmp[x] then
+    tmp[x] = tmp[x] + 1
+  else
+    tmp[x] = 1
+  end
+end
+
 M.char_accuracy = function()
   local userlines = vim.tbl_map(function(line)
     local userwords = vim.tbl_map(function(v)
@@ -181,6 +191,8 @@ M.char_accuracy = function()
       else
         wrongchars[char] = (wrongchars[char] or 0) + 1
       end
+
+      M.save_char_pressed(char)
     end
   end
 
