@@ -234,13 +234,14 @@ local slice_tb = function(tb, start, stop)
 end
 
 M.char_times = function()
+  local char_pressed = stats.val.char_pressed
   local char_times = stats.val.char_times
-  local wrong_counts = stats.val.char_accuracy
   local list = {}
 
   for k, v in pairs(char_times) do
+    v = (char_pressed[k] or 1) / v
     v = math.floor(v * 10) / 10
-    table.insert(list, { k, v, (wrong_counts[k] or 0) })
+    table.insert(list, { k, v })
   end
 
   table.sort(list, function(a, b)
@@ -248,14 +249,14 @@ M.char_times = function()
   end)
 
   local tb1 = slice_tb(list, 1, 5)
-  table.insert(tb1, 1, { "Key", "Time" })
+  table.insert(tb1, 1, { "Key", "Avg" })
 
   tb1 = vim.tbl_map(function(x)
     return { { x[1], "exred" }, x[2] }
   end, tb1)
 
   local tb2 = slice_tb(list, #list, #list - 4)
-  table.insert(tb2, 1, { "Key", "Time" })
+  table.insert(tb2, 1, { "Key", "Avg" })
 
   tb2 = vim.tbl_map(function(x)
     return { { x[1], "exblue" }, x[2] }

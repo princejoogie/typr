@@ -157,12 +157,7 @@ end
 
 M.save_char_pressed = function(x)
   local tmp = state.stats.char_pressed
-
-  if tmp[x] then
-    tmp[x] = tmp[x] + 1
-  else
-    tmp[x] = 1
-  end
+  tmp[x] = (tmp[x] or 0) + 1
 end
 
 M.char_accuracy = function()

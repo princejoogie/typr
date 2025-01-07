@@ -103,11 +103,7 @@ M.save = function()
 
   -- calc char pressed
   for k, v in pairs(stats.char_pressed) do
-    if tmp.char_pressed[k] then
-      tmp.char_pressed[k] = tmp.char_pressed[k] + v
-    else
-      tmp.char_pressed[k] = v
-    end
+    tmp.char_pressed[k] = (tmp.char_pressed[k] or 0) + v
   end
 
   stats_state.val = tmp
