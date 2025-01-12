@@ -233,6 +233,55 @@ local slice_tb = function(tb, start, stop)
   return result
 end
 
+M.emptychad = function(w)
+  local tb = {
+    {
+      "Total",
+      { "  Correct", "exgreen" },
+      { "Wrong", "exred" },
+      "Avg",
+    },
+
+    { 2120, 1000, 231, 90 },
+  }
+
+  local wordStats = voltui.table(tb, w, "normal", { "   Overall word stats" })
+
+  local tb2 = {
+    {
+      "Total",
+      { "  Correct", "exgreen" },
+      { "Wrong", "exred" },
+      "Avg",
+    },
+
+    { 9120, 8000, 531, 90 },
+  }
+
+  local keyStats = voltui.table(tb2, w, "normal")
+
+  local progressTxt = "  Keystrokes "
+
+  local progressbar = voltui.progressbar {
+    w = w - 2 - #progressTxt,
+    val = tmp_stats.accuracy,
+    hl = { on = "exblue" },
+    icon = { on = "|", off = "|" },
+  }
+
+  table.insert(progressbar, 1, { progressTxt })
+
+  progressbar = { progressbar }
+
+  voltui.border(progressbar)
+
+  return voltui.grid_row {
+    wordStats,
+    progressbar,
+    keyStats,
+  }
+end
+
 M.char_times = function()
   local char_pressed = stats.val.char_pressed
   local char_times = stats.val.char_times
@@ -267,10 +316,12 @@ M.char_times = function()
 
   local w1 = voltui.line_w(slowest_keys_ui[1])
   local w2 = voltui.line_w(fastest_keys_ui[1])
+  local w3 = state.w_with_pad - w1 - w2 - 9
 
   return voltui.grid_col {
-    { lines = slowest_keys_ui, pad = 3, w = w1 },
+    { lines = slowest_keys_ui, pad = 2, w = w1 },
     { lines = fastest_keys_ui, pad = 2, w = w2 },
+    { lines = M.emptychad(w3), pad = 2, w = w3 },
   }
 end
 
