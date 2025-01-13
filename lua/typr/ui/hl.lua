@@ -3,12 +3,12 @@ local mix = require("volt.color").mix
 local api = vim.api
 
 local hexadecimal_to_hex = function(hex)
-  return "#" .. ("%06x"):format((hex == nil and 0 or hex))
+  return "#" .. ("%06x"):format(hex == nil and 0 or hex)
 end
 
 local function get_hl(name)
   local hl = api.nvim_get_hl(0, { name = name })
-  local result = { fg = "", bg = "" }
+  local result = {}
 
   if hl.fg ~= nil then
     result.fg = hexadecimal_to_hex(hl.fg)
@@ -31,32 +31,42 @@ return function(ns, winType)
     bg = get_hl("Normal").bg
   end
 
-  bg = lighten(bg, 2)
+  local transparent = not bg
 
-  api.nvim_set_hl(ns, "Typrborder", { fg = bg, bg = bg })
-  api.nvim_set_hl(ns, "TyprNormal", { bg = bg })
+  if not transparent then
+    bg = lighten(bg, 2)
+    api.nvim_set_hl(ns, "Typrborder", { fg = bg, bg = bg })
+    api.nvim_set_hl(ns, "TyprNormal", { bg = bg })
+  else
+    bg = "#000000"
+  end
 
-  if winType == "stats" then
-    local exred = get_hl("ExRed").fg
-    api.nvim_set_hl(ns, "TyprRed", { bg = mix(exred, bg, 80), fg = exred })
+  if winType ~= "stats" then
+    return
+  end
 
-    local exgreen = get_hl("ExGreen").fg
+  local exred = get_hl("ExRed").fg
+  api.nvim_set_hl(ns, "TyprRed", { bg = mix(exred, bg, 80), fg = exred })
 
-    if exgreen == "" then
-      exgreen = get_hl("string").fg
-    end
+  local exgreen = get_hl("ExGreen").fg
 
-    api.nvim_set_hl(ns, "TyprGreen", { bg = mix(exgreen, bg, 80), fg = exgreen })
+  api.nvim_set_hl(ns, "TyprGreen", { bg = mix(exgreen, bg, 80), fg = exgreen })
 
-    api.nvim_set_hl(ns, "TyprGreen0", { fg = mix(exgreen, bg, 10) })
-    api.nvim_set_hl(ns, "TyprGreen1", { fg = mix(exgreen, bg, 30) })
-    api.nvim_set_hl(ns, "TyprGreen2", { fg = mix(exgreen, bg, 50) })
-    api.nvim_set_hl(ns, "TyprGreen3", { fg = mix(exgreen, bg, 80) })
+  api.nvim_set_hl(ns, "TyprGreen0", { fg = mix(exgreen, bg, 10) })
+  api.nvim_set_hl(ns, "TyprGreen1", { fg = mix(exgreen, bg, 40) })
+  api.nvim_set_hl(ns, "TyprGreen2", { fg = mix(exgreen, bg, 60) })
+  api.nvim_set_hl(ns, "TyprGreen3", { fg = mix(exgreen, bg, 80) })
 
-    local exyellow = get_hl("ExYellow").fg
-    api.nvim_set_hl(ns, "TyprYellow", { bg = mix(exyellow, bg, 80), fg = exyellow })
+  local exyellow = get_hl("ExYellow").fg
+  api.nvim_set_hl(ns, "TyprYellow", { bg = mix(exyellow, bg, 80, transparent), fg = exyellow })
 
-    local x = vim.o.bg == "dark" and 1 or -1
-    api.nvim_set_hl(ns, "TyprGrey", { bg = lighten(bg, 6 * x), fg = lighten(get_hl("commentfg").fg, 10 * x) })
+  local x = vim.o.bg == "dark" and 1 or -1
+
+  local commentfg = get_hl("comment").fg
+
+  if transparent then
+    api.nvim_set_hl(ns, "TyprGrey", { bg = lighten(commentfg, -22) })
+  else
+    api.nvim_set_hl(ns, "TyprGrey", { bg = lighten(bg, 6 * x), fg = lighten(commentfg, 10 * x) })
   end
 end

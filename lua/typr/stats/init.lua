@@ -12,20 +12,20 @@ M.open = function()
     { buf = state.statsbuf, layout = layout, xpad = state.xpad, ns = state.ns },
   }
 
-  local dim_buf = api.nvim_create_buf(false, true)
+  -- local dim_buf = api.nvim_create_buf(false, true)
 
-  local dim_win = api.nvim_open_win(dim_buf, false, {
-    focusable = false,
-    row = 0,
-    col = 0,
-    width = vim.o.columns,
-    height = vim.o.lines - 2,
-    relative = "editor",
-    style = "minimal",
-    border = "none",
-  })
-
-  vim.wo[dim_win].winblend = 20
+  -- local dim_win = api.nvim_open_win(dim_buf, false, {
+  --   focusable = false,
+  --   row = 0,
+  --   col = 0,
+  --   width = vim.o.columns,
+  --   height = vim.o.lines - 2,
+  --   relative = "editor",
+  --   style = "minimal",
+  --   border = "none",
+  -- })
+  --
+  -- vim.wo[dim_win].winblend = 20
 
   state.h = voltstate[state.statsbuf].h
 
@@ -55,12 +55,12 @@ M.open = function()
   require "typr.ui.hl"(state.ns, "stats")
 
   volt.mappings {
-    bufs = { state.statsbuf, dim_buf },
+    bufs = { state.statsbuf },
   }
 
   vim.keymap.set("n", "<tab>", function()
     state.months_toggled = not state.months_toggled
-    volt.redraw(state.statsbuf, 'typrStats')
+    volt.redraw(state.statsbuf, "typrStats")
   end, { buffer = state.statsbuf })
 
   vim.bo[state.statsbuf].filetype = "typrstats"
