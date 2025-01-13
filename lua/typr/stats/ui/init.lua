@@ -115,7 +115,7 @@ M.graph = function()
       w = 2,
       gap = 1,
       hl = "exgreen",
-      dual_hl = { "exlightgrey", "comment" },
+      dual_hl = { "exlightgrey", "commentfg" },
       -- format_hl = function(x)
       --   return x > 50 and "exred" or "normal"
       -- end,
@@ -207,7 +207,7 @@ M.keys_accuracy = function()
   table.insert(lines, 1, { { "   Average of Key Accuracies" } })
 
   local indicators = {
-    { { "󱓻 ", "comment" }, { "100% accuracy!" } },
+    { { "󱓻 ", "commentfg" }, { "100% accuracy!" } },
     { { "󱓻 ", "exyellow" }, { "Less than 90%" } },
     { { "󱓻 ", "exred" }, { "Less than 80%" } },
     { { "" } },
@@ -294,6 +294,31 @@ end
 M.char_times = function()
   local char_pressed = stats.val.char_pressed
   local char_times = stats.val.char_times
+
+  if #char_times == 0 then
+    char_times = {
+      a = 0.360408,
+      b = 0.194506,
+      c = 0.108318,
+      d = 0.186247,
+      e = 0.61095,
+      g = 0.281173,
+      h = 0.563126,
+      i = 0.531408,
+      k = 0.236884,
+      l = 0.321144,
+      m = 0.253785,
+      n = 0.586682,
+      o = 0.888713,
+      r = 0.128862,
+      s = 0.506386,
+      t = 0.721127,
+      u = 0.47689,
+      v = 0.154953,
+      w = 0.36646,
+    }
+  end
+
   local list = {}
 
   for k, v in pairs(char_times) do
@@ -328,7 +353,7 @@ M.char_times = function()
   local w3 = state.w_with_pad - w1 - w2 - 10
 
   return voltui.grid_col {
-    { lines = slowest_keys_ui, pad = 3, w = w1 },
+    { lines = slowest_keys_ui, pad = 2, w = w1 },
     { lines = fastest_keys_ui, pad = 2, w = w2 },
     { lines = M.emptychad(w3), pad = 2, w = w3 },
   }

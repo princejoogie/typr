@@ -55,17 +55,17 @@ M.headerbtns = function()
 
   return {
     {
-      { "│ ", "comment" },
+      { "│ ", "commentfg" },
       puncbtn,
       numbtn,
       randombtn,
       spaces,
       linesbtn,
 
-      { " 3 *", state.linecount == 3 and "" or "comment", setline(3) },
-      { " 6 *", state.linecount == 6 and "" or "comment", setline(6) },
-      { " 9", state.linecount == 9 and "" or "comment", setline(9) },
-      { " │", "comment" },
+      { " 3 *", state.linecount == 3 and "" or "commentfg", setline(3) },
+      { " 6 *", state.linecount == 6 and "" or "commentfg", setline(6) },
+      { " 9", state.linecount == 9 and "" or "commentfg", setline(9) },
+      { " │", "commentfg" },
     },
   }
 end
@@ -123,21 +123,21 @@ M.mappings = function()
   return {
     {
       { " ESC ", "visual" },
-      { " or ", "comment" },
+      { " or ", "commentfg" },
       { " q ", "visual" },
-      { " - Quit ", "comment" },
+      { " - Quit ", "commentfg" },
 
       { "  " },
 
       { " i ", "visual" },
-      { " - Start ", "comment" },
+      { " - Start ", "commentfg" },
 
       { "                   " },
 
       { " CTRL ", "visual" },
       { " " },
       { " R ", "visual" },
-      { " - Restart ", "comment" },
+      { " - Restart ", "commentfg" },
     },
   }
 end

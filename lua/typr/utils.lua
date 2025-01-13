@@ -60,7 +60,7 @@ M.gen_default_lines = function()
   for _, v in ipairs(state.default_lines) do
     local line = {}
     for word in string.gmatch(v, "%S+") do
-      table.insert(line, { word .. " ", "Comment" })
+      table.insert(line, { word .. " ", "commentfg" })
     end
 
     table.insert(ui_lines, line)
@@ -93,7 +93,7 @@ M.gen_lines_diff = function(line, userline)
     end
   end
 
-  table.insert(result, { line:sub(#userline + 1), "Comment" })
+  table.insert(result, { line:sub(#userline + 1), "commentfg" })
 
   return result
 end

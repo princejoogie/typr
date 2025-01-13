@@ -14,7 +14,7 @@ local border = function(id, direction)
   return {
     lines = function()
       return {
-        { { icon[1] .. string.rep("─", state.w_with_pad - 2) .. icon[2], "comment" } },
+        { { icon[1] .. string.rep("─", state.w_with_pad - 2) .. icon[2], "commentfg" } },
       }
     end,
     name = id,
