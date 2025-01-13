@@ -50,8 +50,8 @@ return {
       return volt_ui.grid_col {
         {
           lines = leftcol_ui(),
-          w = state.w_with_pad,
-          pad = 1,
+          w = state.w_with_pad-2,
+          pad = 0,
         },
 
         {

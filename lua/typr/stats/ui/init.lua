@@ -36,7 +36,7 @@ local function get_lvlstats(my_secs, wpm_ratio)
 end
 
 M.progress = function()
-  local barlen = state.w_with_pad / 3 - 1
+  local barlen = state.w_with_pad / 3 - 2
   local wpm_progress = (tmp_stats.wpm.avg / config.wpm_goal) * 100
 
   local wpm_stats = {
@@ -85,8 +85,9 @@ M.tabular_stats = function()
     {
       "  Total time",
       "  Tests",
-      "  Lowest WPM",
-      "  Highest WPM",
+      "  Lowest",
+      "  Highest",
+      " RAW WPM",
     },
 
     {
@@ -94,10 +95,11 @@ M.tabular_stats = function()
       "2100",
       "60 WPM",
       "120 WPM",
+      "150 WPM"
     },
   }
 
-  return voltui.table(tb, state.w_with_pad)
+  return voltui.table(tb, state.w_with_pad-2)
 end
 
 M.graph = function()
@@ -128,8 +130,8 @@ M.graph = function()
   }
 
   return voltui.grid_col {
-    { lines = voltui.graphs.bar(wpm_graph_data), w = state.w_with_pad / 2, pad = 0 },
-    { lines = voltui.graphs.dot(accuracy_graph_data), w = state.w_with_pad / 2, pad = 0 },
+    { lines = voltui.graphs.bar(wpm_graph_data), w = (state.w_with_pad-1) / 2, pad = 0 },
+    { lines = voltui.graphs.dot(accuracy_graph_data), w = (state.w_with_pad -1)/ 2, pad = 0 },
   }
 end
 
