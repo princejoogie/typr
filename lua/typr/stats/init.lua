@@ -31,8 +31,8 @@ M.open = function()
 
   state.win = api.nvim_open_win(state.statsbuf, true, {
     row = (vim.o.lines / 2) - (state.h / 2) - 2,
-    col = (vim.o.columns / 2) - (state.w *2/ 2),
-    width =(state.w*2) -6,
+    col = (vim.o.columns / 2) - (state.w * 2 / 2),
+    width = (state.w * 2) - 6,
     height = state.h,
     relative = "editor",
     style = "minimal",
@@ -52,11 +52,16 @@ M.open = function()
     w = state.w_with_pad,
   })
 
-  require ("typr.ui.hl")(state.ns,'stats')
+  require "typr.ui.hl"(state.ns, "stats")
 
   volt.mappings {
     bufs = { state.statsbuf, dim_buf },
   }
+
+  vim.keymap.set("n", "<tab>", function()
+    state.months_toggled = not state.months_toggled
+    volt.redraw(state.statsbuf, 'typrStats')
+  end, { buffer = state.statsbuf })
 
   vim.bo[state.statsbuf].filetype = "typrstats"
 end

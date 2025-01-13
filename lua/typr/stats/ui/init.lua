@@ -364,22 +364,22 @@ M.activity_heatmap = function()
   local days = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" }
   local hlgroups = { "linenr", "typrgreen3", "typrgreen2", "typrgreen1", "typrgreen0" }
 
-  local months_n = 7
-  local squares_len = months_n * 4
-
-  -- 
+  local months_i = state.months_toggled and 6 or 1
+  local months_end = (months_i + 6)
+  local months_to_show = 7
+  local squares_len = months_to_show * 4
 
   local lines = {
     { { "   ", "exgreen" }, { "  " } },
     {},
   }
 
-  for i = 1, months_n do
+  for i = months_i, months_end do
     table.insert(lines[1], { "  " .. months[i] .. "  ", "Visual" })
-    table.insert(lines[1], { i == months_n and "" or "  " })
+    table.insert(lines[1], { i == months_end and "" or "  " })
   end
 
-  local hrline = voltui.separator("─", squares_len * 2 + (months_n - 1 + 5), "exgreen")
+  local hrline = voltui.separator("─", squares_len * 2 + (months_to_show - 1 + 5), "exgreen")
   table.insert(lines[2], hrline[1])
 
   for day = 1, 7 do -- 7 weakdays
@@ -400,7 +400,15 @@ M.activity_heatmap = function()
 
   voltui.border(lines)
 
-  local header = { { "   Activity" }, { "_pad_" }, { "  Less " } }
+  local header = {
+    { "   Activity" },
+    { "  " },
+    { " TAB ", "lazyh1" },
+    { " " },
+    { "Toggle Months", "commentfg" },
+    { "_pad_" },
+    { "  Less " },
+  }
 
   for _, v in ipairs(hlgroups) do
     table.insert(header, { "󱓻 ", v })

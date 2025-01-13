@@ -10,6 +10,7 @@ local M = {
   words_row = 4,
   timer = vim.uv.new_timer(),
   secs = 0,
+  months_toggled = false,
 
   config = {
     kblayout = "qwerty",
