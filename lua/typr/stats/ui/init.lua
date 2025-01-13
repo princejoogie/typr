@@ -234,6 +234,11 @@ local slice_tb = function(tb, start, stop)
 end
 
 M.emptychad = function(w)
+  local words = stats.val.word_stats
+  local keys = stats.val.char_stats
+  local wordavg = ((words.all - words.wrong) / words.all) * 100
+  local charavg = ((keys.all - keys.wrong) / keys.all) * 100
+
   local tb = {
     {
       "Total",
@@ -242,7 +247,7 @@ M.emptychad = function(w)
       "Avg",
     },
 
-    { 2120, 1000, 231, 90 },
+    { words.all, words.all - words.wrong, words.wrong, math.floor(wordavg) },
   }
 
   local wordStats = voltui.table(tb, w, "normal", { "   Overall word stats" })
@@ -255,7 +260,7 @@ M.emptychad = function(w)
       "Avg",
     },
 
-    { 9120, 8000, 531, 90 },
+    { keys.all, keys.all - keys.wrong, keys.wrong, math.floor(charavg) },
   }
 
   local keyStats = voltui.table(tb2, w, "normal")
@@ -316,10 +321,10 @@ M.char_times = function()
 
   local w1 = voltui.line_w(slowest_keys_ui[1])
   local w2 = voltui.line_w(fastest_keys_ui[1])
-  local w3 = state.w_with_pad - w1 - w2 - 9
+  local w3 = state.w_with_pad - w1 - w2 - 10
 
   return voltui.grid_col {
-    { lines = slowest_keys_ui, pad = 2, w = w1 },
+    { lines = slowest_keys_ui, pad = 3, w = w1 },
     { lines = fastest_keys_ui, pad = 2, w = w2 },
     { lines = M.emptychad(w3), pad = 2, w = w3 },
   }

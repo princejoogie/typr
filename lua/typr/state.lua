@@ -28,6 +28,8 @@ local M = {
     typed_char_count = 0,
     char_times = {},
     char_pressed = {},
+    char_stats = { all = 0, wrong = 0 },
+    word_stats = { all = 0, wrong = 0 },
   },
 }
 

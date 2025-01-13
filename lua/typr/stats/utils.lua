@@ -15,6 +15,8 @@ M.gen_default_stats = function()
     char_accuracy = {},
     char_times = {},
     char_pressed = {},
+    char_stats = { all = 0, wrong = 0 },
+    word_stats = { all = 0, wrong = 0 },
   }
 
   for i = 1, 30 do
@@ -105,6 +107,16 @@ M.save = function()
   for k, v in pairs(stats.char_pressed) do
     tmp.char_pressed[k] = (tmp.char_pressed[k] or 0) + v
   end
+
+  tmp.char_stats = {
+    all = tmp.char_stats.all + stats.char_stats.all,
+    wrong = tmp.char_stats.wrong + stats.char_stats.wrong,
+  }
+
+  tmp.word_stats = {
+    all = tmp.word_stats.all + stats.word_stats.all,
+    wrong = tmp.word_stats.wrong + stats.word_stats.wrong,
+  }
 
   stats_state.val = tmp
   state.stats.char_times = {}

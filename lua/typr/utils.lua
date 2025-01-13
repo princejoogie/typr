@@ -130,6 +130,7 @@ M.count_correct_words = function()
 
   local total_words = count + unmatched_count
   state.stats.correct_word_ratio = count .. " / " .. total_words
+  state.stats.word_stats = { all = total_words, wrong = unmatched_count }
   state.stats.wpm = math.floor((count / state.secs) * 60)
   state.stats.rawpm = math.floor((total_words / state.secs) * 60)
 end
@@ -176,20 +177,26 @@ M.char_accuracy = function()
   end, state.default_lines)
 
   local wrongchars = {}
+  local wrongchars_count = 0
+  local totalchars_count = 0
   local rightchars = {}
   local result = {}
 
   for i, line in ipairs(default_lines) do
     for j, char in ipairs(line) do
+      totalchars_count = totalchars_count + 1
       if userlines[i][j] == char then
         rightchars[char] = (rightchars[char] or 0) + 1
       else
         wrongchars[char] = (wrongchars[char] or 0) + 1
+        wrongchars_count = wrongchars_count + 1
       end
 
       M.save_char_pressed(char)
     end
   end
+
+  state.stats.char_stats = { all = totalchars_count, wrong = wrongchars_count }
 
   for key, val in pairs(rightchars) do
     local sum = (wrongchars[key] or 0) + val
