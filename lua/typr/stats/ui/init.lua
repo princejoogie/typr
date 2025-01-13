@@ -95,11 +95,11 @@ M.tabular_stats = function()
       "2100",
       "60 WPM",
       "120 WPM",
-      "150 WPM"
+      "150 WPM",
     },
   }
 
-  return voltui.table(tb, state.w_with_pad-2)
+  return voltui.table(tb, state.w_with_pad - 2)
 end
 
 M.graph = function()
@@ -130,8 +130,8 @@ M.graph = function()
   }
 
   return voltui.grid_col {
-    { lines = voltui.graphs.bar(wpm_graph_data), w = (state.w_with_pad-1) / 2, pad = 0 },
-    { lines = voltui.graphs.dot(accuracy_graph_data), w = (state.w_with_pad -1)/ 2, pad = 0 },
+    { lines = voltui.graphs.bar(wpm_graph_data), w = (state.w_with_pad - 1) / 2, pad = 0 },
+    { lines = voltui.graphs.dot(accuracy_graph_data), w = (state.w_with_pad - 1) / 2, pad = 0 },
   }
 end
 
@@ -249,7 +249,8 @@ M.emptychad = function(w)
       "Avg",
     },
 
-    { words.all, words.all - words.wrong, words.wrong, math.floor(wordavg) },
+    -- { words.all, words.all - words.wrong, words.wrong, math.floor(wordavg) },
+    { 8210, 7130, 1100, 82 },
   }
 
   local wordStats = voltui.table(tb, w, "normal", { "   Overall word stats" })
@@ -262,7 +263,8 @@ M.emptychad = function(w)
       "Avg",
     },
 
-    { keys.all, keys.all - keys.wrong, keys.wrong, math.floor(charavg) },
+    { 8210, 7130, 1100, 82 },
+    -- { keys.all, keys.all - keys.wrong, keys.wrong, math.floor(charavg) },
   }
 
   local keyStats = voltui.table(tb2, w, "normal")
