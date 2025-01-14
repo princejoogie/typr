@@ -82,6 +82,8 @@ M.open = function()
 
   api.nvim_win_set_cursor(state.win, { state.words_row + 1, state.xpad })
 
+  local lasttime = 0
+
   api.nvim_buf_attach(state.buf, false, {
     on_lines = function(_, _, _, line)
       if not state.lastchar and api.nvim_get_mode().mode == "i" then
@@ -101,7 +103,10 @@ M.open = function()
       })
 
       state.lastchar = curline:sub(-1)
-      table.insert(state.stats.char_times, { state.lastchar, os.clock() })
+
+      local cur = vim.uv.hrtime()
+      table.insert(state.stats.char_times, { state.lastchar, (cur - lasttime) / 1e6 })
+      lasttime = cur
     end,
   })
 

@@ -14,7 +14,6 @@ M.gen_default_stats = function()
     accuracy_hist = {},
     char_accuracy = {},
     char_times = {},
-    char_pressed = {},
     char_stats = { all = 0, wrong = 0 },
     word_stats = { all = 0, wrong = 0 },
   }
@@ -100,12 +99,7 @@ M.save = function()
 
   -- calc char times
   for k, v in pairs(stats.char_times) do
-    tmp.char_times[k] = (tmp.char_times[k] or 0) + v
-  end
-
-  -- calc char pressed
-  for k, v in pairs(stats.char_pressed) do
-    tmp.char_pressed[k] = (tmp.char_pressed[k] or 0) + v
+    tmp.char_times[k] = ((tmp.char_times[k] or 0) + v) / times
   end
 
   tmp.char_stats = {

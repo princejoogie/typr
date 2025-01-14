@@ -156,11 +156,6 @@ M.get_accuracy = function()
   state.stats.typed_char_count = mystrlen
 end
 
-M.save_char_pressed = function(x)
-  local tmp = state.stats.char_pressed
-  tmp[x] = (tmp[x] or 0) + 1
-end
-
 M.char_accuracy = function()
   local userlines = vim.tbl_map(function(line)
     local userwords = vim.tbl_map(function(v)
@@ -191,8 +186,6 @@ M.char_accuracy = function()
         wrongchars[char] = (wrongchars[char] or 0) + 1
         wrongchars_count = wrongchars_count + 1
       end
-
-      M.save_char_pressed(char)
     end
   end
 
@@ -208,12 +201,19 @@ end
 
 M.char_times_calc = function()
   local t = state.stats.char_times
+
   local chars = {}
+  local pressed = {}
 
   for _, v in ipairs(t) do
     if v[1] ~= "" and v[1] ~= " " then
       chars[v[1]] = (chars[v[1]] or 0) + v[2]
+      pressed[v[1]] = (pressed[v[1]] or 0) + 1
     end
+  end
+
+  for k, v in pairs(chars) do
+    chars[k] = v / pressed[k]
   end
 
   state.stats.char_times = chars
