@@ -66,6 +66,10 @@ M.open = function()
     custom_empty_lines = utils.set_emptylines,
   })
 
+  if state.config.insert_on_start then
+    vim.api.nvim_command("startinsert")
+  end
+
   require("volt.events").add(state.buf)
 
   ----------------- keymaps --------------------------
