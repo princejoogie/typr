@@ -6,8 +6,8 @@ M.gen_default_stats = function()
   local default_stats = {
     times = 0,
     total_secs = 0,
-    rawpm = 0,
     wpm = { avg = 0, max = 0, min = 0 },
+    rawpm = { avg = 0, max = 0, min = 0 },
     accuracy = 0,
     rawpm_hist = {},
     wpm_hist = {},
@@ -75,8 +75,10 @@ M.save = function()
   table.remove(tmp.wpm_hist)
 
   -- calc rawpm
-  tmp.rawpm = ((tmp.rawpm * oldtimes) + stats.rawpm) / times
-  tmp.rawpm = math.floor(tmp.rawpm)
+  tmp.rawpm.avg = ((tmp.rawpm.avg * oldtimes) + stats.rawpm) / times
+  tmp.rawpm.avg = math.floor(tmp.rawpm.avg)
+  tmp.rawpm.max = (stats.rawpm > tmp.rawpm.max and stats.rawpm) or tmp.rawpm.max
+
   table.insert(tmp.rawpm_hist, 1, tmp.rawpm)
   table.remove(tmp.rawpm_hist)
 

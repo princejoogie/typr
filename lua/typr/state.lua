@@ -25,6 +25,7 @@ local M = {
   stats = {
     accuracy = 0,
     wpm = 0,
+    rawpm = 0,
     correct_word_ratio = "?",
     total_char_count = 0,
     typed_char_count = 0,

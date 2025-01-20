@@ -2,7 +2,6 @@ local M = {}
 local state = require "typr.state"
 local words = require "typr.constants.words"
 local volt = require "volt"
-local typrstat_utils = require "typr.stats.utils"
 
 local gen_random_word = function()
   local word = ""
