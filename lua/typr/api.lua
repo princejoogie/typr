@@ -41,6 +41,7 @@ M.restart = function()
     return
   end
 
+  state.lastchar = nil
   state.secs = 0
   state.stats.wpm = 0
   state.h = state.h - 2
