@@ -41,9 +41,8 @@ M.restart = function()
     return
   end
 
-  state.lastchar = nil
-  state.secs = 0
-  state.stats.wpm = 0
+  state.reset_vars()
+
   state.h = state.h - 2
   vim.api.nvim_win_set_height(state.win, state.h)
   utils.set_emptylines()

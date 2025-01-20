@@ -22,7 +22,15 @@ local M = {
     stats_filepath = vim.fn.stdpath "config" .. "/typrstats",
   },
 
-  stats = {
+  -- stats = {} -- data stored here after test finishes
+  -- then saved to disk and this table is reset
+}
+
+M.reset_vars = function()
+  M.lastchar = nil
+  M.secs = 0
+
+  M.stats = {
     accuracy = 0,
     wpm = 0,
     rawpm = 0,
@@ -32,8 +40,12 @@ local M = {
     char_times = {},
     char_stats = { all = 0, wrong = 0 },
     word_stats = { all = 0, wrong = 0 },
-  },
-}
+  }
+
+  M.timer:stop()
+end
+
+M.reset_vars()
 
 M.w_with_pad = M.w - (2 * M.xpad)
 

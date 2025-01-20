@@ -72,7 +72,7 @@ M.open = function()
   volt.mappings {
     bufs = { state.buf, dim_buf },
     after_close = function()
-      state.timer:stop()
+      state.reset_vars()
     end,
   }
 
