@@ -1,6 +1,8 @@
-local ui = require "typr.stats.ui"
-local volt_ui = require "volt.ui"
+local dashboard = require "typr.stats.dashboard"
+local keystrokes = require "typr.stats.keystrokes"
+local voltui = require "volt.ui"
 local state = require "typr.state"
+local history = require "typr.stats.history"
 
 local empty_line = {
   lines = function()
@@ -9,61 +11,26 @@ local empty_line = {
   name = "emptyline",
 }
 
-local leftcol_ui = function()
-  return volt_ui.grid_row {
-    ui.progress(),
-    { {} },
-    ui.tabular_stats(),
-    { {} },
-    ui.graph(),
-    { {} },
-    ui.rawpm(),
-  }
-end
-
-local rightcol_ui = function()
-  return volt_ui.grid_row {
-    ui.keys_accuracy(),
-    { {} },
-    ui.char_times(),
-    { {} },
-    ui.activity_heatmap(),
-  }
-end
-
-local divider = function()
-  local result = {}
-
-  for _ = 1, state.h do
-    table.insert(result, { { "  │  ", "linenr" } })
-  end
-
-  return result
-end
+local components = {
+  ["  Dashboard"] = dashboard,
+  Keystrokes = keystrokes,
+  ["  History"] = history,
+}
 
 return {
+  {
+    lines = function()
+      local data = { "  Dashboard", "Keystrokes", "_pad_", "  History" }
+      return voltui.tabs(data, state.w_with_pad, { active = state.tab })
+    end,
+    name = "tabs",
+  },
 
   empty_line,
 
   {
     lines = function()
-      return volt_ui.grid_col {
-        {
-          lines = leftcol_ui(),
-          w = state.w_with_pad-2,
-          pad = 0,
-        },
-
-        {
-          lines = divider(),
-          w = 1,
-        },
-
-        {
-          lines = rightcol_ui(),
-          w = state.w_with_pad,
-        },
-      }
+      return components[state.tab]()
     end,
     name = "typrStats",
   },

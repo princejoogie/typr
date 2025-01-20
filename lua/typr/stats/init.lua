@@ -29,17 +29,18 @@ M.open = function()
 
   state.h = voltstate[state.statsbuf].h
 
+  local  large_screen = state.h + 10 < vim.o.lines
+  local h = large_screen and state.h or vim.o.lines - 7
+
   state.win = api.nvim_open_win(state.statsbuf, true, {
-    row = (vim.o.lines / 2) - (state.h / 2) - 2,
-    col = (vim.o.columns / 2) - (state.w * 2 / 2),
-    width = (state.w * 2) - 6,
-    height = state.h,
+    row = large_screen and ((vim.o.lines / 2) - (state.h / 2)) or 2,
+    col = (vim.o.columns / 2) - (state.w / 2),
+    width = state.w,
+    height = h,
     relative = "editor",
     style = "minimal",
     border = "single",
     zindex = 100,
-    title = { { " Typing Stats ", "pmenusel" } },
-    title_pos = "center",
   })
 
   api.nvim_win_set_hl_ns(state.win, state.ns)
@@ -48,7 +49,7 @@ M.open = function()
   api.nvim_set_hl(state.ns, "Normal", { link = "typrnormal" })
 
   volt.run(state.statsbuf, {
-    h = state.h,
+    h = state.h+1,
     w = state.w_with_pad,
   })
 
@@ -61,6 +62,21 @@ M.open = function()
   vim.keymap.set("n", "<tab>", function()
     state.months_toggled = not state.months_toggled
     volt.redraw(state.statsbuf, "typrStats")
+  end, { buffer = state.statsbuf })
+
+  vim.keymap.set("n", "D", function()
+    state.tab = "  Dashboard"
+    volt.redraw(state.statsbuf, "all")
+  end, { buffer = state.statsbuf })
+
+  vim.keymap.set("n", "K", function()
+    state.tab = "Keystrokes"
+    volt.redraw(state.statsbuf, "all")
+  end, { buffer = state.statsbuf })
+
+    vim.keymap.set("n", "H", function()
+    state.tab = "  History"
+    volt.redraw(state.statsbuf, "all")
   end, { buffer = state.statsbuf })
 
   vim.bo[state.statsbuf].filetype = "typrstats"
