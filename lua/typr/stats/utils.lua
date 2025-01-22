@@ -18,6 +18,7 @@ M.gen_default_stats = function()
     char_stats = { all = 0, wrong = 0 },
     word_stats = { all = 0, wrong = 0 },
     test_history = {},
+    activity = {},
   }
 
   for i = 1, 32 do
@@ -129,6 +130,9 @@ M.save = function()
   })
 
   table.remove(tmp.test_history, 1)
+
+  local date = os.date "%d%m%Y"
+  tmp.activity[date] = (tmp.activity[date] or 0) + 1
 
   stats_state.val = tmp
   state.stats.char_times = {}
