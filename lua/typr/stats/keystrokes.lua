@@ -63,6 +63,17 @@ local keys_accuracy = function()
 
   table.insert(lines, 1, { { "   Average of Key Accuracies" } })
 
+  if state.winlayout == "horizontal" then
+    table.insert(lines[1], { "  " })
+
+    local virts =
+      { { " Ctrl ", "visual" }, { " + ", "comment" }, { " t ", "visual" }, { " Cycle panes ", "commentfg" } }
+
+    for _, v in ipairs(virts) do
+      table.insert(lines[1], v)
+    end
+  end
+
   local indicators = {
     { { "󱓻 ", "commentfg" }, { "100% accuracy!" } },
     { { "󱓻 ", "exyellow" }, { "Less than 90%" } },
@@ -190,14 +201,14 @@ local char_times = function()
   table.insert(tb1, 1, { "Key", "Avg" })
 
   tb1 = vim.tbl_map(function(x)
-    return { {{ x[1], "exred" }}, x[2] }
+    return { { { x[1], "exred" } }, x[2] }
   end, tb1)
 
   local tb2 = slice_tb(list, #list, #list - 4)
   table.insert(tb2, 1, { "Key", "Avg" })
 
   tb2 = vim.tbl_map(function(x)
-    return { {{ x[1], "exblue" }}, x[2] }
+    return { { { x[1], "exblue" } }, x[2] }
   end, tb2)
 
   local slowest_keys_ui = voltui.table(tb1, "fit", "normal", { "Slowest keys" })
@@ -210,7 +221,7 @@ local char_times = function()
   return voltui.grid_col {
     { lines = slowest_keys_ui, pad = 2, w = w1 },
     { lines = fastest_keys_ui, pad = 2, w = w2 },
-    { lines = emptychad(w3), pad = 2, w = w3 },
+    { lines = emptychad(w3), w = w3 },
   }
 end
 

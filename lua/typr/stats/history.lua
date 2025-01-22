@@ -31,23 +31,23 @@ local tabular_stats = function()
   }
 
   for i = 1, 16 do
-  table.insert(tb, dum)
+    table.insert(tb, dum)
   end
 
   local w1 = state.w_with_pad - 30
-  local w2 = 30
+  local w2 = 29
 
-  local goalTb = {{ "  WPM GOAL ~ 150" }}
+  local goalTb = { { "  WPM GOAL ~ 150" } }
 
   local progressbar = voltui.progressbar {
-    w = w2-4,
+    w = w2 - 4,
     val = 60,
     hl = { on = "exblue" },
     icon = { on = "|", off = "|" },
   }
 
   for _, _ in ipairs(tb) do
-    table.insert(goalTb, {progressbar})
+    table.insert(goalTb, { progressbar })
   end
   table.remove(goalTb)
 

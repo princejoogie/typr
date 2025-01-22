@@ -13,6 +13,7 @@ local M = {
   months_toggled = false,
   tab = "  Dashboard",
   winlayout = "horizontal",
+  horiz_i = 1,
 
   config = {
     winlayout = "responsive",

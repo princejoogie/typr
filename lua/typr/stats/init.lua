@@ -55,6 +55,11 @@ M.open = function()
     volt.redraw(state.statsbuf, "all")
   end, { buffer = state.statsbuf })
 
+  vim.keymap.set("n", "<C-t>", function()
+    state.horiz_i = state.horiz_i == 3 and 1 or state.horiz_i + 1
+    volt.redraw(state.statsbuf, "all")
+  end, { buffer = state.statsbuf })
+
   vim.bo[state.statsbuf].filetype = "typrstats"
 
   vim.api.nvim_create_autocmd("VimResized", {

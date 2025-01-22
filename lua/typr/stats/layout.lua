@@ -14,7 +14,7 @@ local divider = function()
   local result = {}
 
   for _ = 1, state.h do
-    table.insert(result, { { "  │  ", "linenr" } })
+    table.insert(result, { { "│", "linenr" } })
   end
 
   return result
@@ -24,10 +24,14 @@ local horiz_layout = {
   {
     name = "typrStats",
     lines = function()
+      local view_order = { dashboard, keystrokes, history }
+      local i = state.horiz_i
+      local i2 = i == 3 and 1 or i + 1
+
       return voltui.grid_col {
-        { lines = dashboard(), w = state.w_with_pad - 2, pad = 2 },
-        { lines = divider(), w = 1 },
-        { lines = keystrokes(), w = state.w_with_pad },
+        { lines = view_order[i](), w = state.w_with_pad, pad = 2 },
+        { lines = divider(), pad = 2, w = 1 },
+        { lines = view_order[i2](), w = state.w_with_pad },
       }
     end,
   },
@@ -49,7 +53,12 @@ local vertical_layout = {
     name = "emptyline",
   },
 
-  { lines = function() return components[state.tab]() end, name = "typrStats" },
+  {
+    lines = function()
+      return components[state.tab]()
+    end,
+    name = "typrStats",
+  },
 }
 
 return {
