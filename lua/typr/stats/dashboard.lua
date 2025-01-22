@@ -127,8 +127,8 @@ local graph = function()
   }
 
   return voltui.grid_col {
-    { lines = voltui.graphs.bar(wpm_graph_data), w = (state.w_with_pad - 1) / 2, pad = 0 },
-    { lines = voltui.graphs.dot(accuracy_graph_data), w = (state.w_with_pad - 1) / 2, pad = 0 },
+    { lines = voltui.graphs.bar(wpm_graph_data), w = (state.w_with_pad - 1) / 2, pad = 2 },
+    { lines = voltui.graphs.dot(accuracy_graph_data), w = (state.w_with_pad - 1) / 2 },
   }
 end
 
