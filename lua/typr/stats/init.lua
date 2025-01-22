@@ -3,60 +3,36 @@ local api = vim.api
 local state = require "typr.state"
 local volt = require "volt"
 local voltstate = require "volt.state"
-local layout = require "typr.stats.layout"
+local utils = require "typr.stats.utils"
 
 M.open = function()
   state.statsbuf = api.nvim_create_buf(false, true)
 
-  volt.gen_data {
-    { buf = state.statsbuf, layout = layout, xpad = state.xpad, ns = state.ns },
-  }
+  if state.config.winlayout == "responsive" then
+    state.winlayout = vim.o.columns > ((2 * state.w) + 10) and "horizontal" or "vertical"
+  else
+    state.winlayout = state.config.winlayout
+  end
 
-  -- local dim_buf = api.nvim_create_buf(false, true)
-
-  -- local dim_win = api.nvim_open_win(dim_buf, false, {
-  --   focusable = false,
-  --   row = 0,
-  --   col = 0,
-  --   width = vim.o.columns,
-  --   height = vim.o.lines - 2,
-  --   relative = "editor",
-  --   style = "minimal",
-  --   border = "none",
-  -- })
-  --
-  -- vim.wo[dim_win].winblend = 20
-
+  require("typr.stats.utils").init_volt()
   state.h = voltstate[state.statsbuf].h
 
-  local  large_screen = state.h + 10 < vim.o.lines
-  local h = large_screen and state.h or vim.o.lines - 7
-
-  state.win = api.nvim_open_win(state.statsbuf, true, {
-    row = large_screen and ((vim.o.lines / 2) - (state.h / 2)) or 2,
-    col = (vim.o.columns / 2) - (state.w / 2),
-    width = state.w,
-    height = h,
-    relative = "editor",
-    style = "minimal",
-    border = "single",
-    zindex = 100,
-  })
+  local winconf = utils.make_winconf()
+  state.win = api.nvim_open_win(state.statsbuf, true, winconf)
 
   api.nvim_win_set_hl_ns(state.win, state.ns)
-
   api.nvim_set_hl(state.ns, "FloatBorder", { link = "typrborder" })
   api.nvim_set_hl(state.ns, "Normal", { link = "typrnormal" })
 
-  volt.run(state.statsbuf, {
-    h = state.h+1,
-    w = state.w_with_pad,
-  })
+  volt.run(state.statsbuf, { h = state.h + 1, w = state.w_with_pad })
 
   require "typr.ui.hl"(state.ns, "stats")
 
   volt.mappings {
     bufs = { state.statsbuf },
+    after_close = function()
+      vim.api.nvim_del_augroup_by_name "TyprResize"
+    end,
   }
 
   vim.keymap.set("n", "<tab>", function()
@@ -74,12 +50,33 @@ M.open = function()
     volt.redraw(state.statsbuf, "all")
   end, { buffer = state.statsbuf })
 
-    vim.keymap.set("n", "H", function()
+  vim.keymap.set("n", "H", function()
     state.tab = "  History"
     volt.redraw(state.statsbuf, "all")
   end, { buffer = state.statsbuf })
 
   vim.bo[state.statsbuf].filetype = "typrstats"
+
+  vim.api.nvim_create_autocmd("VimResized", {
+    group = vim.api.nvim_create_augroup("TyprResize", {}),
+    callback = function()
+      if state.config.winlayout == "responsive" then
+        state.winlayout = vim.o.columns > ((2 * state.w) + 10) and "horizontal" or "vertical"
+        state.h = state.h == 40 and 36 or 40
+
+        vim.bo[state.statsbuf].modifiable = true
+        require("volt").set_empty_lines(state.statsbuf, state.h, 1)
+        vim.bo[state.statsbuf].modifiable = false
+
+        utils.init_volt()
+        volt.redraw(state.statsbuf, "all")
+      end
+
+      local conf = utils.make_winconf()
+      api.nvim_win_set_config(state.win, conf)
+      api.nvim_win_set_hl_ns(state.win, state.ns)
+    end,
+  })
 end
 
 return M

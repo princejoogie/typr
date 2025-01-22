@@ -12,8 +12,10 @@ local M = {
   secs = 0,
   months_toggled = false,
   tab = "  Dashboard",
+  winlayout = "horizontal",
 
   config = {
+    winlayout = "responsive",
     kblayout = "qwerty",
     wpm_goal = 200,
     numbers = false,

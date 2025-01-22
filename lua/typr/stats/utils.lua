@@ -1,6 +1,7 @@
 local M = {}
 local state = require "typr.state"
 local stats_state = require "typr.stats.state"
+local layout = require "typr.stats.layout"
 
 M.gen_default_stats = function()
   local default_stats = {
@@ -118,6 +119,33 @@ M.save = function()
   state.stats.char_times = {}
 
   M.save_str_tofile(tmp)
+end
+
+M.init_volt = function()
+  require("volt").gen_data {
+    { buf = state.statsbuf, layout = layout[state.winlayout], xpad = state.xpad, ns = state.ns },
+  }
+end
+
+M.make_winconf = function()
+  local large_screen = state.h + 10 < vim.o.lines
+  local h = large_screen and state.h or vim.o.lines - 7
+  local winw = state.w
+
+  if state.winlayout == "horizontal" then
+    winw = winw * 2
+  end
+
+  return {
+    row = large_screen and ((vim.o.lines / 2) - (state.h / 2)) or 2,
+    col = (vim.o.columns / 2) - (winw / 2),
+    width = winw,
+    height = h,
+    relative = "editor",
+    style = "minimal",
+    border = "single",
+    zindex = 100,
+  }
 end
 
 return M

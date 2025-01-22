@@ -114,7 +114,7 @@ M.open = function()
     end,
   })
 
-  require("typr.mappings")()
+  require "typr.mappings"()
 end
 
 return M
