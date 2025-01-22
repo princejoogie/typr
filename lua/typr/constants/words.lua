@@ -302,7 +302,6 @@ return {
   "react",
   "yes",
   "sunshine",
-  "zodiac",
   "yellow",
   "refresh",
   "tiger",

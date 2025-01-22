@@ -1,21 +1,8 @@
-local M = {}
 local state = require "typr.state"
 local config = state.config
 local voltui = require "volt.ui"
 local stats = require "typr.stats.state"
 local kblayouts = require "typr.constants.kblayouts"
-
-local tmp_stats = {
-  times = 5,
-  total_secs = 3001,
-
-  wpm = {
-    avg = 70,
-    max = 120,
-  },
-
-  accuracy = 60,
-}
 
 local border_chars = {
   mid = { top = "┬", bot = "┴", none = "┼" },
@@ -117,8 +104,7 @@ local emptychad = function(w)
       "Avg",
     },
 
-    -- { words.all, words.all - words.wrong, words.wrong, math.floor(wordavg) },
-    { 8210, 7130, 1100, 82 },
+    { words.all, words.all - words.wrong, words.wrong, math.floor(wordavg) },
   }
 
   local wordStats = voltui.table(tb, w, "normal", { "   Overall word stats" })
@@ -131,8 +117,7 @@ local emptychad = function(w)
       "Avg",
     },
 
-    { 8210, 7130, 1100, 82 },
-    -- { keys.all, keys.all - keys.wrong, keys.wrong, math.floor(charavg) },
+    { keys.all, keys.all - keys.wrong, keys.wrong, math.floor(charavg) },
   }
 
   local keyStats = voltui.table(tb2, w, "normal")
@@ -141,7 +126,7 @@ local emptychad = function(w)
 
   local progressbar = voltui.progressbar {
     w = w - 2 - #progressTxt,
-    val = tmp_stats.accuracy,
+    val = stats.val.accuracy,
     hl = { on = "exblue" },
     icon = { on = "|", off = "|" },
   }

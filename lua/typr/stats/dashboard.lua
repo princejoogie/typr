@@ -1,18 +1,7 @@
 local state = require "typr.state"
+local stats = require "typr.stats.state"
 local config = state.config
 local voltui = require "volt.ui"
-
-local tmp_stats = {
-  times = 5,
-  total_secs = 3001,
-
-  wpm = {
-    avg = 70,
-    max = 120,
-  },
-
-  accuracy = 60,
-}
 
 local function secsTodhm(secs)
   local days = math.floor(secs / 86400)
@@ -22,7 +11,7 @@ local function secsTodhm(secs)
 end
 
 local function get_lvlstats(my_secs, wpm_ratio)
-  local level = math.floor(my_secs / 1000)
+  local level = math.floor(my_secs / 1000) + 1
   local next_lvl = (level + 1) * 1000
   local next_perc = math.floor(((my_secs + wpm_ratio) / next_lvl) * 100)
 
@@ -34,10 +23,10 @@ end
 
 local progress = function()
   local barlen = state.w_with_pad / 3 - 1
-  local wpm_progress = (tmp_stats.wpm.avg / config.wpm_goal) * 100
+  local wpm_progress = (stats.val.wpm.avg / config.wpm_goal) * 100
 
   local wpm_stats = {
-    { { "", "exgreen" }, { "  WPM ~ " }, { tostring(tmp_stats.wpm.avg) .. " / " .. tostring(config.wpm_goal) } },
+    { { "", "exgreen" }, { "  WPM ~ " }, { tostring(stats.val.wpm.avg) .. " / " .. tostring(config.wpm_goal) } },
     {},
     voltui.progressbar {
       w = barlen,
@@ -48,16 +37,16 @@ local progress = function()
   }
 
   local accuracy_stats = {
-    { { "", "exred" }, { "  Accuracy ~ " }, { tostring(tmp_stats.accuracy) .. " %" } },
+    { { "", "exred" }, { "  Accuracy ~ " }, { tostring(stats.val.accuracy) .. " %" } },
     {},
     voltui.progressbar {
       w = barlen,
-      val = tmp_stats.accuracy,
+      val = stats.val.accuracy,
       icon = { on = "┃", off = "┃" },
     },
   }
 
-  local lvl_stats = get_lvlstats(tmp_stats.total_secs, tmp_stats.accuracy)
+  local lvl_stats = get_lvlstats(stats.val.total_secs, stats.val.accuracy)
 
   local lvl_stats_ui = {
     { { "", "exyellow" }, { "  Level ~ " }, { tostring(lvl_stats.val) } },
@@ -88,11 +77,11 @@ local tabular_stats = function()
     },
 
     {
-      secsTodhm(tmp_stats.total_secs),
-      "2100",
-      "60 WPM",
-      "120 WPM",
-      "150 WPM",
+      secsTodhm(stats.val.total_secs),
+      stats.val.times,
+      stats.val.wpm.min .. " WPM",
+      stats.val.wpm.max .. " WPM",
+      stats.val.rawpm.avg .. " WPM",
     },
   }
 
@@ -100,12 +89,16 @@ local tabular_stats = function()
 end
 
 local graph = function()
+  local data = vim.tbl_map(function(x)
+    return math.floor(x / config.wpm_goal * 100)
+  end, stats.val.wpm_hist)
+
   local wpm_graph_data = {
-    val = { 60, 20, 80, 70, 30, 10, 30, 50, 20, 40 },
+    val = data,
     footer_label = { " Last 10 WPM stats" },
 
     format_labels = function(x)
-      return tostring((x / 100) * 150)
+      return tostring((x / 100) * config.wpm_goal)
     end,
 
     baropts = {
@@ -121,7 +114,7 @@ local graph = function()
   }
 
   local accuracy_graph_data = {
-    val = { 60, 20, 80, 70, 30, 10, 30, 50, 20, 40 },
+    val = stats.val.accuracy_hist,
     w = state.w_with_pad / 2,
     footer_label = { "Last 10 Accuracy stats" },
   }
@@ -133,22 +126,28 @@ local graph = function()
 end
 
 local rawpm = function()
-  local m = { 60, 20, 80, 70, 30, 20, 80, 70, 30, 80, 70, 30, 50 }
-  local n = { 60, 20, 80, 70, 30, 20, 80, 70, 30, 80, 70, unpack(m) }
+  local data = vim.tbl_map(function(x)
+    return math.floor(x / config.wpm_goal * 100)
+  end, stats.val.rawpm_hist)
 
   local wpm_graph_data = {
-    val = { 60, 20, 80, 70, 30, 10, 30, 50, 20, 40, unpack(n) },
-    footer_label = { " Last 20 RAW WPM stats" },
+    val = data,
+    footer_label = { " Last 32 RAW WPM stats" },
 
     format_labels = function(x)
-      return tostring((x / 100) * 150)
+      return tostring((x / 100) * config.wpm_goal)
     end,
 
     baropts = {
       w = 1,
       gap = 1,
       format_hl = function(x)
-        return x > 30 and "exred" or "normal"
+        if x > 85 then
+          return "exgreen"
+        elseif x > 60 then
+          return "normal"
+        end
+        return "exred"
       end,
     },
     w = state.w_with_pad / 2,

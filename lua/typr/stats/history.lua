@@ -3,24 +3,13 @@ local voltui = require "volt.ui"
 local stats = require "typr.stats.state"
 
 local tabular_stats = function()
-  local dum = {
-    "21 s",
-    "60",
-    "150",
-    "99%",
-  }
+  local tb = { { "Time", "WPM", "RAW", "Accuracy" } }
 
-  local tb = {
-    {
-      "Time",
-      "WPM",
-      "RAW",
-      "Accuracy",
-    },
-  }
+  local history = stats.val.test_history
 
   for i = 1, 8 do
-    table.insert(tb, dum)
+    local data = history[i]
+    table.insert(tb, { data.time, data.wpm, data.rawpm, data.accuracy })
   end
 
   local w1 = state.w_with_pad - 30
@@ -30,17 +19,17 @@ local tabular_stats = function()
     { { { "  WPM GOAL ~ 150", "normal" } } },
   }
 
-  local progressbar = voltui.progressbar {
-    w = w2 - 4,
-    val = 60,
-    hl = { on = "exblue" },
-    icon = { on = "|", off = "|" },
-  }
-
-  for _, _ in ipairs(tb) do
-    table.insert(goalTb, { progressbar })
+  for i, _ in ipairs(tb) do
+    if i ~= 1 then
+      local progressbar = voltui.progressbar {
+        w = w2 - 4,
+        val = math.floor(tb[i][2] / state.config.wpm_goal * 100),
+        hl = { on = "exblue" },
+        icon = { on = "|", off = "|" },
+      }
+      table.insert(goalTb, { progressbar })
+    end
   end
-  table.remove(goalTb)
 
   return voltui.grid_col {
     {
@@ -98,14 +87,6 @@ local rawpm = function()
         end
         return x > 30 and "exblue" or "exgreen"
       end,
-
-      format_icon = function(x)
-        if x < 40 then
-          return ""
-        elseif x > 20 then
-          return "󰄰"
-        end
-      end,
     },
     w = state.w_with_pad / 2,
   }
@@ -121,7 +102,7 @@ end
 
 return function()
   return require("volt.ui").grid_row {
-    { { { "   History of last 7 tests" } } },
+    { { { "   History of last 8 tests" } } },
 
     tabular_stats(),
     { {} },

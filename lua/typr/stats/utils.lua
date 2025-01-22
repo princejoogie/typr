@@ -17,15 +17,20 @@ M.gen_default_stats = function()
     char_times = {},
     char_stats = { all = 0, wrong = 0 },
     word_stats = { all = 0, wrong = 0 },
+    test_history = {},
   }
 
-  for i = 1, 30 do
+  for i = 1, 32 do
     if i <= 10 then
       table.insert(default_stats.wpm_hist, 0)
       table.insert(default_stats.accuracy_hist, 0)
     end
 
     table.insert(default_stats.rawpm_hist, 0)
+  end
+
+  for _ = 1, 8 do
+    table.insert(default_stats.test_history, { wpm = 0, rawpm = 0, accuracy = 0, time = 0 })
   end
 
   return default_stats
@@ -72,23 +77,24 @@ M.save = function()
     tmp.wpm.min = (stats.wpm < tmp.wpm.min and stats.wpm) or tmp.wpm.min
   end
 
-  table.insert(tmp.wpm_hist, 1, tmp.wpm)
-  table.remove(tmp.wpm_hist)
+  table.insert(tmp.wpm_hist, tmp.wpm.avg)
+  table.remove(tmp.wpm_hist, 1)
 
   -- calc rawpm
   tmp.rawpm.avg = ((tmp.rawpm.avg * oldtimes) + stats.rawpm) / times
   tmp.rawpm.avg = math.floor(tmp.rawpm.avg)
   tmp.rawpm.max = (stats.rawpm > tmp.rawpm.max and stats.rawpm) or tmp.rawpm.max
 
-  table.insert(tmp.rawpm_hist, 1, tmp.rawpm)
-  table.remove(tmp.rawpm_hist)
+  table.insert(tmp.rawpm_hist, tmp.rawpm.avg)
+  table.remove(tmp.rawpm_hist, 1)
 
   -- calc accuracy
+  table.insert(tmp.accuracy_hist, stats.accuracy)
+  table.remove(tmp.accuracy_hist, 1)
+
+  -- accuracy average
   tmp.accuracy = ((tmp.accuracy * oldtimes) + stats.accuracy) / times
   tmp.accuracy = math.floor(tmp.accuracy)
-
-  table.insert(tmp.accuracy_hist, 1, tmp.accuracy)
-  table.remove(tmp.accuracy_hist)
 
   tmp.total_secs = tmp.total_secs + state.secs
 
@@ -114,6 +120,15 @@ M.save = function()
     all = tmp.word_stats.all + stats.word_stats.all,
     wrong = tmp.word_stats.wrong + stats.word_stats.wrong,
   }
+
+  table.insert(tmp.test_history, {
+    wpm = stats.wpm,
+    rawpm = stats.rawpm,
+    accuracy = stats.accuracy,
+    time = state.secs,
+  })
+
+  table.remove(tmp.test_history, 1)
 
   stats_state.val = tmp
   state.stats.char_times = {}
