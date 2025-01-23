@@ -1,4 +1,5 @@
 local state = require "typr.state"
+local config = state.config
 local voltui = require "volt.ui"
 local stats = require "typr.stats.state"
 
@@ -16,7 +17,7 @@ local tabular_stats = function()
   local w2 = 29
 
   local goalTb = {
-    { { { "  WPM GOAL ~ 150", "normal" } } },
+    { { { "  WPM GOAL ~ " .. config.wpm_goal,  "normal" } } },
   }
 
   for i, _ in ipairs(tb) do

@@ -12,15 +12,24 @@ local border_chars = {
 }
 
 local keys_accuracy = function()
-  local x = stats.val.char_accuracy
+  local data = stats.val.char_accuracy
   local lines = {}
   local line = string.rep("─", (10 * 4) + 1)
+
+  local keys = {}
+  for k, v in pairs(data) do
+    table.insert(keys, { k, v })
+  end
+
+  table.sort(keys, function(a, b)
+    return a[2] < b[2]
+  end)
 
   for i, v in ipairs(kblayouts[config.kblayout]) do
     local row = {}
 
     for _, letter in ipairs(v) do
-      local score = x[letter] or 100
+      local score = data[letter] or 100
       local hl = score == 100 and "TyprGrey" or "TyprRed"
 
       if score > 90 and score < 100 then
@@ -61,12 +70,14 @@ local keys_accuracy = function()
     end
   end
 
+  local worst_keys = keys[1][1] .. " " .. keys[2][1] .. " " .. keys[3][1]
+
   local indicators = {
     { { "󱓻 ", "commentfg" }, { "100% accuracy!" } },
     { { "󱓻 ", "exyellow" }, { "Less than 90%" } },
     { { "󱓻 ", "exred" }, { "Less than 80%" } },
     { { "" } },
-    { { "Inaccurate keys: ", "exred" }, { "a z i", "exlightgrey" } },
+    { { "Top worst keys: ", "exred" }, { worst_keys, "exlightgrey" } },
   }
 
   voltui.border(indicators, "exred")
@@ -213,7 +224,7 @@ local activity_heatmap = function()
   local days_in_months = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 }
   local days = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" }
 
-  local four_colors = {"red", "green", "blue", "yellow"}
+  local four_colors = { "red", "green", "blue", "yellow" }
   local monthshl = vim.list_extend(vim.list_extend(four_colors, four_colors), four_colors)
 
   local months_i = state.months_toggled and 6 or 1

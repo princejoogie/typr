@@ -1236,8 +1236,6 @@ return {
   "quicksand",
   "presence",
   "outlet",
-  "magic",
-  "nude",
   "ocean",
   "neat",
   "momentum",

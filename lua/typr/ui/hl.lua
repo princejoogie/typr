@@ -75,8 +75,7 @@ return function(ns, winType)
   api.nvim_set_hl(ns, "TyprYellow3", { fg = mix(exyellow, bg, 80) })
 
   -- local exyellow = get_hl("ExYellow").fg
-
-  -- api.nvim_set_hl(ns, "TyprYellow", { bg = mix(exyellow, bg, 80, transparent), fg = exyellow })
+  api.nvim_set_hl(ns, "TyprYellow", { bg = mix(exyellow, bg, 80, transparent), fg = exyellow })
 
   local x = vim.o.bg == "dark" and 1 or -1
 
