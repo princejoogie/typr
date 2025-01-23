@@ -186,10 +186,35 @@ local char_times = function()
   }
 end
 
+local year = os.date "%Y"
+
+local getday_i = function(day, month)
+  return tonumber(os.date("%w", os.time { year = tostring(year), month = month, day = day })) + 1
+end
+
+local double_digits = function(day)
+  return day > 10 and day or "0" .. day
+end
+
+local get_activity_hl = function(n)
+  if n > 10 then
+    return "0"
+  elseif n > 5 then
+    return "1"
+  elseif n > 0 then
+    return "2"
+  else
+    return "3"
+  end
+end
+
 local activity_heatmap = function()
   local months = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" }
-  local days = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" }
-  local hlgroups = { "linenr", "typrgreen3", "typrgreen2", "typrgreen1", "typrgreen0" }
+  local days_in_months = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 }
+  local days = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" }
+
+  local four_colors = {"red", "green", "blue", "yellow"}
+  local monthshl = vim.list_extend(vim.list_extend(four_colors, four_colors), four_colors)
 
   local months_i = state.months_toggled and 6 or 1
   local months_end = (months_i + 6)
@@ -202,27 +227,39 @@ local activity_heatmap = function()
   }
 
   for i = months_i, months_end do
-    table.insert(lines[1], { "  " .. months[i] .. "  ", "Visual" })
+    local hl = "ex" .. monthshl[i]
+    table.insert(lines[1], { "  " .. months[i] .. "  ", hl })
     table.insert(lines[1], { i == months_end and "" or "  " })
   end
 
-  local hrline = voltui.separator("─", squares_len * 2 + (months_to_show - 1 + 5), "exgreen")
+  local hrline = voltui.separator("─", squares_len * 2 + (months_to_show - 1 + 5), "exlightgrey")
   table.insert(lines[2], hrline[1])
 
   for day = 1, 7 do -- 7 weakdays
     local line = { { days[day], "exlightgrey" }, { " │ ", "linenr" } }
+    table.insert(lines, line)
+  end
 
-    for i = 1, squares_len do -- 12 months * 4 weeks
-      local hl = hlgroups[math.random(1, #hlgroups)]
-      local space = i == squares_len and "" or " "
-      table.insert(line, { "󱓻" .. space, hl })
+  for i = months_i, months_end do
+    local month_i = i
 
-      if i % 4 == 0 then
-        table.insert(line, { space })
+    local start_day = getday_i(1, month_i)
+    if start_day ~= 1 and month_i == 1 then
+      for n = 1, start_day - 1 do
+        table.insert(lines[n + 2], { "  " })
       end
     end
 
-    table.insert(lines, line)
+    for n = 1, days_in_months[month_i] do
+      local day = getday_i(n, month_i)
+      local key = double_digits(n) .. double_digits(month_i) .. year
+
+      local activity = stats.val.activity[key] or 0
+      local hl = "Typr" .. monthshl[month_i] .. get_activity_hl(activity)
+      hl = activity == 0 and "Linenr" or hl
+
+      table.insert(lines[day + 2], { "󱓻" .. " ", hl })
+    end
   end
 
   voltui.border(lines)
@@ -236,6 +273,8 @@ local activity_heatmap = function()
     { "_pad_" },
     { "  Less " },
   }
+
+  local hlgroups = { "linenr", "typrgreen3", "typrgreen2", "typrgreen1", "typrgreen0" }
 
   for _, v in ipairs(hlgroups) do
     table.insert(header, { "󱓻 ", v })
