@@ -11,8 +11,8 @@ local function secsTodhm(secs)
 end
 
 local function get_lvlstats(my_secs, wpm_ratio)
-  local level = math.floor(my_secs / 1000) + 1
-  local next_lvl = (level + 1) * 1000
+  local level = math.floor(my_secs / 200) + 1
+  local next_lvl = (level + 1) * 200
   local next_perc = math.floor(((my_secs + wpm_ratio) / next_lvl) * 100)
 
   return {
@@ -46,7 +46,7 @@ local progress = function()
     },
   }
 
-  local lvl_stats = get_lvlstats(stats.val.total_secs, stats.val.accuracy)
+  local lvl_stats = get_lvlstats(stats.val.total_secs, wpm_progress)
 
   local lvl_stats_ui = {
     { { "", "exyellow" }, { "  Level ~ " }, { tostring(lvl_stats.val) } },

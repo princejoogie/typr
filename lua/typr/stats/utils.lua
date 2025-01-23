@@ -78,7 +78,7 @@ M.save = function()
     tmp.wpm.min = (stats.wpm < tmp.wpm.min and stats.wpm) or tmp.wpm.min
   end
 
-  table.insert(tmp.wpm_hist, tmp.wpm.avg)
+  table.insert(tmp.wpm_hist, stats.wpm)
   table.remove(tmp.wpm_hist, 1)
 
   -- calc rawpm
@@ -86,7 +86,7 @@ M.save = function()
   tmp.rawpm.avg = math.floor(tmp.rawpm.avg)
   tmp.rawpm.max = (stats.rawpm > tmp.rawpm.max and stats.rawpm) or tmp.rawpm.max
 
-  table.insert(tmp.rawpm_hist, tmp.rawpm.avg)
+  table.insert(tmp.rawpm_hist, stats.rawpm)
   table.remove(tmp.rawpm_hist, 1)
 
   -- calc accuracy
