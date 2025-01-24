@@ -45,9 +45,9 @@ M.open = function()
   volt.mappings {
     bufs = { state.statsbuf, dim_buf },
     winclosed_event = true,
-    after_close = function()
-      vim.api.nvim_del_augroup_by_name "TyprResize"
-    end,
+    -- after_close = function()
+    --   vim.api.nvim_del_augroup_by_name "TyprResize"
+    -- end,
   }
 
   vim.keymap.set("n", "<tab>", function()
@@ -77,26 +77,26 @@ M.open = function()
 
   vim.bo[state.statsbuf].filetype = "typrstats"
 
-  vim.api.nvim_create_autocmd("VimResized", {
-    group = vim.api.nvim_create_augroup("TyprResize", {}),
-    callback = function()
-      if state.config.winlayout == "responsive" then
-        state.winlayout = vim.o.columns > ((2 * state.w) + 10) and "horizontal" or "vertical"
-        state.h = state.h == 40 and 36 or 40
-
-        vim.bo[state.statsbuf].modifiable = true
-        require("volt").set_empty_lines(state.statsbuf, state.h, 1)
-        vim.bo[state.statsbuf].modifiable = false
-
-        utils.init_volt()
-        volt.redraw(state.statsbuf, "all")
-      end
-
-      local conf = utils.make_winconf()
-      api.nvim_win_set_config(state.win, conf)
-      api.nvim_win_set_hl_ns(state.win, state.ns)
-    end,
-  })
+  -- vim.api.nvim_create_autocmd("VimResized", {
+  --   group = vim.api.nvim_create_augroup("TyprResize", {}),
+  --   callback = function()
+  --     if state.config.winlayout == "responsive" then
+  --       state.winlayout = vim.o.columns > ((2 * state.w) + 10) and "horizontal" or "vertical"
+  --       state.h = state.h == 40 and 36 or 40
+  --
+  --       vim.bo[state.statsbuf].modifiable = true
+  --       require("volt").set_empty_lines(state.statsbuf, state.h, 1)
+  --       vim.bo[state.statsbuf].modifiable = false
+  --
+  --       utils.init_volt()
+  --       volt.redraw(state.statsbuf, "all")
+  --     end
+  --
+  --     local conf = utils.make_winconf()
+  --     api.nvim_win_set_config(state.win, conf)
+  --     api.nvim_win_set_hl_ns(state.win, state.ns)
+  --   end,
+  -- })
 end
 
 return M
