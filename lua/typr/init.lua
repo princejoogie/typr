@@ -73,6 +73,7 @@ M.open = function()
   ----------------- keymaps --------------------------
   volt.mappings {
     bufs = { state.buf, dim_buf },
+    winclosed_event = true,
     after_close = function()
       state.reset_vars()
     end,

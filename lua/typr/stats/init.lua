@@ -14,6 +14,20 @@ M.open = function()
     state.winlayout = state.config.winlayout
   end
 
+  local dim_buf = api.nvim_create_buf(false, true)
+  local dim_win = api.nvim_open_win(dim_buf, false, {
+    focusable = false,
+    row = 0,
+    col = 0,
+    width = vim.o.columns,
+    height = vim.o.lines - 2,
+    relative = "editor",
+    style = "minimal",
+    border = "none",
+  })
+
+  vim.wo[dim_win].winblend = 20
+
   require("typr.stats.utils").init_volt()
   state.h = voltstate[state.statsbuf].h
 
@@ -29,7 +43,8 @@ M.open = function()
   require "typr.ui.hl"(state.ns, "stats")
 
   volt.mappings {
-    bufs = { state.statsbuf },
+    bufs = { state.statsbuf, dim_buf },
+    winclosed_event = true,
     after_close = function()
       vim.api.nvim_del_augroup_by_name "TyprResize"
     end,
