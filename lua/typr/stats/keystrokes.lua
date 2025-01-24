@@ -90,17 +90,16 @@ end
 
 local slice_tb = function(tb, start, stop)
   local result = {}
+  local start_i = start > stop and -1 or 1
 
-  local kek = start > stop and -1 or 1
-
-  for i = start, stop, kek do
+  for i = start, stop, start_i do
     table.insert(result, tb[i])
   end
 
   return result
 end
 
-local emptychad = function(w)
+local key_word_stats = function(w)
   local words = state.data.word_stats
   local keys = state.data.char_stats
   local wordavg = ((words.all - words.wrong) / words.all) * 100
@@ -192,7 +191,7 @@ local char_times = function()
   return voltui.grid_col {
     { lines = slowest_keys_ui, pad = 2, w = w1 },
     { lines = fastest_keys_ui, pad = 2, w = w2 },
-    { lines = emptychad(w3), w = w3 },
+    { lines = key_word_stats(w3), w = w3 },
   }
 end
 
@@ -207,9 +206,9 @@ local double_digits = function(day)
 end
 
 local get_activity_hl = function(n)
-  if n > 10 then
+  if n > 20 then
     return "0"
-  elseif n > 5 then
+  elseif n > 10 then
     return "1"
   elseif n > 0 then
     return "2"

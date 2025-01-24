@@ -144,9 +144,9 @@ local rawpm = function()
         if x > 85 then
           return "exgreen"
         elseif x > 60 then
-          return "normal"
+          return "exred"
         end
-        return "exred"
+        return "normal"
       end,
     },
     w = state.w_with_pad / 2,
