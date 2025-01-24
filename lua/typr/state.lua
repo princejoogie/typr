@@ -29,6 +29,11 @@ local M = {
     random = false,
     insert_on_start = false,
     stats_filepath = vim.fn.stdpath "config" .. "/typrstats",
+    mappings = nil,
+    -- or function(buf)   end
+    -- mappings = function(buf)
+    --  vim.keymap.set("n", "a, anything, { buffer = buf })
+    -- end
   },
 
   -- for stats

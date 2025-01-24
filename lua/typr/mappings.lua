@@ -42,4 +42,8 @@ return function()
   end
 
   map("n", "o", "", { buffer = state.buf })
+
+  if state.config.mappings then
+    state.config.mappings(state.buf)
+  end
 end
