@@ -1,10 +1,10 @@
 # Typr
 
-A neovim plugin to practice typing with a very beautiful dashboard
-
-![image](https://github.com/user-attachments/assets/1723fcd9-e7a9-406e-afab-0a1fb66fef30)
-![image](https://github.com/user-attachments/assets/235023a9-6668-48e8-b1a7-c393ecb55bca)
-![dashboard](https://github.com/user-attachments/assets/6148e97c-4eb3-484f-9247-2eb1cce15942)
+A Neovim plugin for practice typing with a very beautiful dashboard.
+ 
+![typr](https://github.com/user-attachments/assets/4426d1c4-c4d3-4da7-987a-3b4c4395a4b5)
+![typrstats](https://github.com/user-attachments/assets/b1653de3-05f3-4b90-b35e-9341eed8bf3e)
+![typrstats vertical](https://github.com/user-attachments/assets/1ca824a0-5227-48c4-991c-f793cf62074a)
 
 # Install 
 
@@ -22,3 +22,20 @@ A neovim plugin to practice typing with a very beautiful dashboard
 # Config
 
 https://github.com/nvzone/typr/blob/main/lua/typr/state.lua#L18
+
+# Mappings
+
+Whatever buttons you see, the mapping starts from their first letter i.e
+
+In Typr window
+
+- s = toggle symbols
+- n = toggle numbers
+- r = toggle random
+- 3 = set 3 lines , and so on!
+
+In Typrstats vertical window
+
+- D = dashboard
+- H = history
+- K = Keystrokes
