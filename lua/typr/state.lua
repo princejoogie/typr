@@ -15,19 +15,24 @@ local M = {
   winlayout = "horizontal",
   horiz_i = 1,
 
+  -- temporary!
+  -- stats = {} -- data stored here after test finishes
+  -- then saved to disk and this table is reset
+
+  ----------------------- user config -----------------------
   config = {
     winlayout = "responsive",
     kblayout = "qwerty",
     wpm_goal = 120,
     numbers = false,
-    punctuation = false,
+    symbols = false,
     random = false,
     insert_on_start = false,
     stats_filepath = vim.fn.stdpath "config" .. "/typrstats",
   },
 
-  -- stats = {} -- data stored here after test finishes
-  -- then saved to disk and this table is reset
+  -- for stats
+  data = {},
 }
 
 M.reset_vars = function()

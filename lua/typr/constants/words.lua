@@ -819,7 +819,6 @@ return {
   "check",
   "each",
   "even",
-  "beer",
   "eye",
   "fold",
   "floor",

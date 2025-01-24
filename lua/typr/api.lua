@@ -3,9 +3,11 @@ local volt = require "volt"
 local state = require "typr.state"
 local utils = require "typr.utils"
 
-M.toggle_punctuation = function()
-  state.config.punctuation = not state.config.punctuation
+M.toggle_symbols = function()
+  state.config.symbols = not state.config.symbols
   volt.redraw(state.buf, "headerbtns")
+  utils.gen_default_lines()
+  volt.redraw(state.buf, "words")
 end
 
 M.toggle_numbers = function()
@@ -15,8 +17,7 @@ M.toggle_numbers = function()
   volt.redraw(state.buf, "words")
 end
 
-
-M.random_words = function()
+M.toggle_random = function()
   state.config.random = not state.config.random
   volt.redraw(state.buf, "headerbtns")
   utils.gen_default_lines()
@@ -37,7 +38,7 @@ M.set_linecount = function(x)
 end
 
 M.restart = function()
-  if(state.stats.wpm == 0) then
+  if state.stats.wpm == 0 then
     return
   end
 
@@ -48,7 +49,7 @@ M.restart = function()
   utils.set_emptylines()
   utils.gen_default_lines()
   require("typr").initialize_volt()
-  volt.redraw(state.buf, 'all')
+  volt.redraw(state.buf, "all")
 end
 
 return M

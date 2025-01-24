@@ -70,8 +70,6 @@ M.open = function()
     vim.api.nvim_command("startinsert")
   end
 
-  require("volt.events").add(state.buf)
-
   ----------------- keymaps --------------------------
   volt.mappings {
     bufs = { state.buf, dim_buf },

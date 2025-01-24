@@ -1,12 +1,11 @@
 local state = require "typr.state"
 local config = state.config
 local voltui = require "volt.ui"
-local stats = require "typr.stats.state"
 
 local tabular_stats = function()
   local tb = { { "Time", "WPM", "RAW", "Accuracy" } }
 
-  local history = stats.val.test_history
+  local history = state.data.test_history
 
   for i = 1, 8 do
     local data = history[i]
@@ -46,7 +45,7 @@ local tabular_stats = function()
 end
 
 local rawpm = function()
-  local char_times = stats.val.char_times
+  local char_times = state.data.char_times
   local sum = 0
 
   for _, v in pairs(char_times) do

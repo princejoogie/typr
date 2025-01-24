@@ -3,6 +3,13 @@ local state = require "typr.state"
 local words = require "typr.constants.words"
 local volt = require "volt"
 
+local symbols = {
+  "!", "\"", "#", "$", "%", "&", "'", "(", ")", "*", "+", ",", "-", ".", "/",
+  ":", ";", "<", "=", ">", "?", "@", "[", "\\", "]", "^", "_", "`", "{", "|", "}", "~"
+}
+
+local punct_symbolslen = #symbols
+
 local gen_random_word = function()
   local word = ""
   local length = math.random(1, 7)
@@ -24,6 +31,12 @@ M.gen_word = function()
     word = tostring(math.random(1, 1000))
   else
     word = config.random and gen_random_word() or words[math.random(1, #words)]
+  end
+
+  if(state.config.symbols) then
+    local tmp_i = math.random(0, punct_symbolslen)
+    local symbol = tmp_i > 0 and symbols[tmp_i] or ""
+    word = word .. symbol
   end
 
   return word

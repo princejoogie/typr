@@ -1,6 +1,5 @@
 local M = {}
 local state = require "typr.state"
-local stats_state = require "typr.stats.state"
 local layout = require "typr.stats.layout"
 
 M.gen_default_stats = function()
@@ -52,16 +51,16 @@ M.restore_stats = function()
   local ok, stats = pcall(dofile, path)
 
   if ok then
-    stats_state.val = vim.json.decode(stats)
+    state.data = vim.json.decode(stats)
   else
-    stats_state.val = M.gen_default_stats()
-    M.save_str_tofile(stats_state.val)
+    state.data = M.gen_default_stats()
+    M.save_str_tofile(state.data)
   end
 end
 
 M.save = function()
   local stats = state.stats
-  local tmp = stats_state.val
+  local tmp = state.data
 
   tmp.times = tmp.times + 1
   local oldtimes = tmp.times - 1
@@ -134,7 +133,7 @@ M.save = function()
   local date = os.date "%d%m%Y"
   tmp.activity[date] = (tmp.activity[date] or 0) + 1
 
-  stats_state.val = tmp
+  state.data = tmp
   state.stats.char_times = {}
 
   M.save_str_tofile(tmp)

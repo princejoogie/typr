@@ -1,8 +1,8 @@
 local state = require "typr.state"
 local map = vim.keymap.set
 local api = vim.api
-local utils = require "typr.utils"
 local myapi = require "typr.api"
+local utils = require "typr.utils"
 
 return function()
   map("i", "<Space>", function()
@@ -30,4 +30,14 @@ return function()
     api.nvim_win_set_cursor(state.win, { state.words_row + 1, state.xpad })
     myapi.restart()
   end, { buffer = state.buf })
+
+  map("n", "s", myapi.toggle_symbols, { buffer = state.buf })
+  map("n", "n", myapi.toggle_numbers, { buffer = state.buf })
+  map("n", "r", myapi.toggle_random, { buffer = state.buf })
+
+  for _, v in ipairs { 3, 6, 9 } do
+    map("n", tostring(v), function()
+      myapi.set_linecount(v)
+    end, { buffer = state.buf })
+  end
 end

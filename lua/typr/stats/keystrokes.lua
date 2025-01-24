@@ -1,7 +1,6 @@
 local state = require "typr.state"
 local config = state.config
 local voltui = require "volt.ui"
-local stats = require "typr.stats.state"
 local kblayouts = require "typr.constants.kblayouts"
 
 local border_chars = {
@@ -12,7 +11,7 @@ local border_chars = {
 }
 
 local keys_accuracy = function()
-  local data = stats.val.char_accuracy
+  local data = state.data.char_accuracy
   local lines = {}
   local line = string.rep("─", (10 * 4) + 1)
 
@@ -102,8 +101,8 @@ local slice_tb = function(tb, start, stop)
 end
 
 local emptychad = function(w)
-  local words = stats.val.word_stats
-  local keys = stats.val.char_stats
+  local words = state.data.word_stats
+  local keys = state.data.char_stats
   local wordavg = ((words.all - words.wrong) / words.all) * 100
   local charavg = ((keys.all - keys.wrong) / keys.all) * 100
 
@@ -137,7 +136,7 @@ local emptychad = function(w)
 
   local progressbar = voltui.progressbar {
     w = w - 2 - #progressTxt,
-    val = stats.val.accuracy,
+    val = state.data.accuracy,
     hl = { on = "exblue" },
     icon = { on = "|", off = "|" },
   }
@@ -156,7 +155,7 @@ local emptychad = function(w)
 end
 
 local char_times = function()
-  local char_times = stats.val.char_times
+  local char_times = state.data.char_times
 
   local list = {}
 
@@ -265,7 +264,7 @@ local activity_heatmap = function()
       local day = getday_i(n, month_i)
       local key = double_digits(n) .. double_digits(month_i) .. year
 
-      local activity = stats.val.activity[key] or 0
+      local activity = state.data.activity[key] or 0
       local hl = "Typr" .. monthshl[month_i] .. get_activity_hl(activity)
       hl = activity == 0 and "Linenr" or hl
 
