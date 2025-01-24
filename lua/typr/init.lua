@@ -67,7 +67,7 @@ M.open = function()
   })
 
   if state.config.insert_on_start then
-    vim.api.nvim_command("startinsert")
+    vim.api.nvim_command "startinsert"
   end
 
   ----------------- keymaps --------------------------
@@ -113,6 +113,10 @@ M.open = function()
   })
 
   require "typr.mappings"()
+
+  pcall(function()
+    require("cmp").setup.buffer { enabled = false }
+  end)
 end
 
 return M
