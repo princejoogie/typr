@@ -40,4 +40,6 @@ return function()
       myapi.set_linecount(v)
     end, { buffer = state.buf })
   end
+
+  map("n", "o", "", { buffer = state.buf })
 end
