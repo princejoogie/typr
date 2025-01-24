@@ -24,7 +24,9 @@ local keys_accuracy = function()
     return a[2] < b[2]
   end)
 
-  for i, v in ipairs(kblayouts[config.kblayout]) do
+  local kblayout = config.kblayout or kblayouts[config.kblayout]
+
+  for i, v in ipairs(kblayout) do
     local row = {}
 
     for _, letter in ipairs(v) do
