@@ -8,6 +8,8 @@ A Neovim plugin for practice typing with a very beautiful dashboard.
 
 # Install 
 
+- Users which used typr before, delete your previous typrstats file.
+
 ```lua
 {
     "nvzone/typr",
