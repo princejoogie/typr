@@ -2,25 +2,8 @@ local state = require "typr.state"
 local map = vim.keymap.set
 local api = vim.api
 local myapi = require "typr.api"
-local utils = require "typr.utils"
 
 return function()
-  map("i", "<Space>", function()
-    local pos = vim.api.nvim_win_get_cursor(state.win)
-    local curline_end = #state.default_lines[pos[1] - state.words_row]
-
-    if pos[2] > curline_end then
-      if state.words_row_end == pos[1] then
-        utils.on_finish()
-        return
-      end
-
-      api.nvim_win_set_cursor(state.win, { pos[1] + 1, state.xpad })
-    else
-      api.nvim_feedkeys(" ", "n", true)
-    end
-  end, { buffer = state.buf })
-
   map("n", "i", function()
     api.nvim_win_set_cursor(state.win, { state.words_row + 1, state.xpad })
     vim.cmd.startinsert()
@@ -42,6 +25,7 @@ return function()
   end
 
   map("n", "o", "", { buffer = state.buf })
+  map("i", "<cr>", "", { buffer = state.buf })
 
   if state.config.mappings then
     state.config.mappings(state.buf)
