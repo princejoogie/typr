@@ -53,7 +53,9 @@ M.restore_stats = function()
   if ok then
     state.data = vim.json.decode(stats)
   else
-    state.data = M.gen_default_stats()
+    local oldfile = vim.fn.stdpath "config" .. "/typrstats"
+    local ok2, oldata = pcall(dofile, oldfile)
+    state.data = ok2 and vim.json.decode(oldata) or M.gen_default_stats()
     M.save_str_tofile(state.data)
   end
 end

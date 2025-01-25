@@ -28,7 +28,7 @@ local M = {
     symbols = false,
     random = false,
     insert_on_start = false,
-    stats_filepath = vim.fn.stdpath "config" .. "/typrstats",
+    stats_filepath = vim.fn.stdpath "data" .. "/typrstats",
     mappings = nil,
     -- or function(buf)   end
     -- mappings = function(buf)
