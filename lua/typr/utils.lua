@@ -176,39 +176,33 @@ end
 
 M.count_correct_words = function()
   local count = 0
-  local userlines = {}
-  local default_lines = {}
   local unmatched_count = 0
+  local curchar_count = 0
+  local total_char_count = 0
+  local userlines = {}
 
   for _, line in ipairs(state.ui_lines) do
-    local strs = ""
-
-    for _, v in ipairs(line) do
-      strs = strs .. v[1]
-    end
-
-    table.insert(userlines, vim.split(strs, " "))
+    userlines = vim.list_extend(userlines, line)
   end
 
-  for _, line in ipairs(state.default_lines) do
-    table.insert(default_lines, vim.split(line, " "))
-  end
+  for _, v in ipairs(userlines) do
+    local wordslen = #vim.split(v[1], " ")
 
-  for i, line in ipairs(userlines) do
-    for j, word in ipairs(line) do
-      if default_lines[i][j] == word then
-        count = count + 1
-      else
-        unmatched_count = unmatched_count + 1
-      end
+    if v[2] == "Added" then
+      count = count + wordslen
+      curchar_count = curchar_count + #v[1]
+    elseif v[2] == "Removed" and v[1] ~= " " and v[1] ~= "" then
+      unmatched_count = unmatched_count + wordslen
     end
+
+    total_char_count = total_char_count + #v[1]
   end
 
   local total_words = count + unmatched_count
   state.stats.correct_word_ratio = count .. " / " .. total_words
   state.stats.word_stats = { all = total_words, wrong = unmatched_count }
-  state.stats.wpm = math.floor((count / state.secs) * 60)
-  state.stats.rawpm = math.floor((total_words / state.secs) * 60)
+  state.stats.wpm = math.floor(((curchar_count / 5) / state.secs) * 60)
+  state.stats.rawpm = math.floor(((total_char_count / 5) / state.secs) * 60)
 end
 
 M.get_accuracy = function()
@@ -223,12 +217,12 @@ M.get_accuracy = function()
     end
   end
 
-  local mystrlen = #mystr:gsub("%s+", "")
-  local default_words = #table.concat(state.default_lines):gsub("%s+", "")
-  local accuracy = (mystrlen / default_words) * 100
+  local mystrlen = #mystr
+  local total_char_count = #table.concat(state.default_lines)
+  local accuracy = (mystrlen / total_char_count) * 100
 
   state.stats.accuracy = math.floor(accuracy)
-  state.stats.total_char_count = default_words
+  state.stats.total_char_count = total_char_count
   state.stats.typed_char_count = mystrlen
 end
 
