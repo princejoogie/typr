@@ -113,7 +113,9 @@ M.phrases_to_lines = function()
       local arrlen = #lines
       local lastline_len = #lines[arrlen]
 
-      if lastline_len + #v + 1 > maxw then
+      if lastline_len + #v + 2 > maxw then
+        local space =  arrlen == state.linecount and "" or " "
+        lines[arrlen] = lines[arrlen] .. space
         table.insert(lines, v)
       else
         local space = lastline_len == 0 and "" or " "
