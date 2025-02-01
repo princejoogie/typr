@@ -122,6 +122,10 @@ M.open = function()
   pcall(function()
     require("cmp").setup.buffer { enabled = false }
   end)
+
+  if type(state.config.on_attach) == "function" then
+    state.config.on_attach(state.buf)
+  end
 end
 
 return M
