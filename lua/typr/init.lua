@@ -99,6 +99,10 @@ M.open = function()
       local words_row = line - state.words_row + 1
       local default_line = state.default_lines[words_row]
 
+      if not default_line then
+        return
+      end
+
       state.ui_lines[words_row] = utils.gen_lines_diff(default_line, curline)
 
       api.nvim_buf_set_extmark(state.buf, state.ns, line, 0, {
