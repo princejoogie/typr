@@ -18,6 +18,10 @@ M.initialize_volt = function()
 end
 
 M.open = function()
+  if state.buf then
+    return
+  end
+
   require "typr.ui.hl"(0)
 
   state.buf = api.nvim_create_buf(false, true)

@@ -64,6 +64,7 @@ M.reset_vars = function()
   }
 
   M.timer:stop()
+  M.buf = nil
 end
 
 M.reset_vars()

@@ -6,6 +6,10 @@ local voltstate = require "volt.state"
 local utils = require "typr.stats.utils"
 
 M.open = function()
+  if state.statsbuf then
+    return
+  end
+
   state.statsbuf = api.nvim_create_buf(false, true)
 
   if state.config.winlayout == "responsive" then
@@ -45,9 +49,10 @@ M.open = function()
   volt.mappings {
     bufs = { state.statsbuf, dim_buf },
     winclosed_event = true,
-    -- after_close = function()
-    --   vim.api.nvim_del_augroup_by_name "TyprResize"
-    -- end,
+    after_close = function()
+      state.statsbuf = nil
+      -- vim.api.nvim_del_augroup_by_name "TyprResize"
+    end,
   }
 
   vim.keymap.set("n", "<tab>", function()
