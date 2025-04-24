@@ -80,6 +80,7 @@ M.open = function()
     winclosed_event = true,
     after_close = function()
       state.reset_vars()
+      state.buf = nil
     end,
   }
 
