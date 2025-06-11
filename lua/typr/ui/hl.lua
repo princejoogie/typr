@@ -1,25 +1,7 @@
-local lighten = require("volt.color").change_hex_lightness
-local mix = require("volt.color").mix
 local api = vim.api
-
-local hexadecimal_to_hex = function(hex)
-  return "#" .. ("%06x"):format(hex == nil and 0 or hex)
-end
-
-local function get_hl(name)
-  local hl = api.nvim_get_hl(0, { name = name })
-  local result = {}
-
-  if hl.fg ~= nil then
-    result.fg = hexadecimal_to_hex(hl.fg)
-  end
-
-  if hl.bg ~= nil then
-    result.bg = hexadecimal_to_hex(hl.bg)
-  end
-
-  return result
-end
+local mix = require("volt.color").mix
+local get_hl = require("volt.utils").get_hl
+local lighten = require("volt.color").change_hex_lightness
 
 return function(ns, winType)
   local bg
