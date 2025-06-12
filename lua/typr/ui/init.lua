@@ -21,7 +21,8 @@ M.headerbtns = function()
     { " 9", state.linecount == 9 and "" or "commentfg" },
   }
 
-  local lines = { voltui.hpad(line, state.w + 1) }
+  -- 4 = border charw+pad 2 and 2 on both sides
+  local lines = { voltui.hpad(line, state.w - (state.xpad * 2) - 4 ) }
   voltui.border(lines)
   return lines
 end
@@ -55,7 +56,7 @@ M.stats = function()
     totalstrlen = totalstrlen + vim.api.nvim_strwidth(v[1])
   end
 
-  local lines = { voltui.hpad(txts, state.w + 1) }
+  local lines = { voltui.hpad(txts, state.w - (state.xpad * 2) - 4 ) }
   voltui.border(lines)
   table.insert(lines, {})
   return lines
